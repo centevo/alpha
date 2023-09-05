@@ -9,7 +9,7 @@ canvas {
 .hide {
   color: white;
   position:absolute;
-  left:0px;
+  left:100px;
   top:0px;
   width:auto;
   max-width:380px;
