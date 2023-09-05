@@ -1,79 +1,158 @@
-/*
-  Johan Karlsson (DonKarlssonSan) 2018
-*/
+class World {
+  renderer;
+  scene;
+  camera;
+  molecule;
 
-let canvas;
-let ctx;
-let w, h;
-let m;
-let simplex;
-let mx, my;
-let now;
+  constructor() {
+    this.build();
+    
+    window.addEventListener('resize', this.resize.bind(this))
 
-function setup() {
-  canvas = document.querySelector("#canvas");
-  ctx = canvas.getContext("2d");
-  reset();
-  window.addEventListener("resize", reset);
-  canvas.addEventListener("mousemove", mousemove);
-  console.log(`Referrer: ${document.referrer}`);
-  if (document.referrer === "https://codepen.io/tv/AQpNyx") {
-    // Mua hahahahahahahaha!!
-    canvas.classList.add("hide");
-    let text = document.querySelector("#text");
-    text.classList.remove("hide");
+    this.animate = this.animate.bind(this);
+    this.animate();
+  }
+
+  build() {
+    this.scene = new THREE.Scene();
+    this.camera = new THREE.PerspectiveCamera(
+      75,
+      window.innerWidth / window.innerHeight,
+      0.1,
+      1000
+    );
+    this.camera.position.z = 3;
+
+    this.renderer = new THREE.WebGLRenderer({
+      alpha:true,
+      antialias:true
+    });
+    this.renderer.setPixelRatio( window.devicePixelRatio );
+    this.renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(this.renderer.domElement);
+    
+    this.molecule = new Molecule()
+    this.scene.add(this.molecule);
+  }
+
+  resize() {
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    this.camera.aspect = w / h;
+    this.camera.updateProjectionMatrix();
+    this.renderer.setSize(w, h);
+  }
+
+  animate() {
+    requestAnimationFrame(this.animate);
+    
+    const time = performance.now() * 0.001;
+
+    this.molecule.animate(time);
+    
+
+    this.renderer.render(this.scene, this.camera);
   }
 }
 
-function reset() {
-  simplex = new SimplexNoise();
-  w = canvas.width = window.innerWidth;
-  h = canvas.height = window.innerHeight;
-  m = Math.min(w, h);
-  mx = w / 2;
-  my = h / 2;
-}
+class Molecule extends THREE.Object3D{
+  material;
+  geometry;
+  mesh;
+  radius = 1.5;
+  detail = 40;
+  particleSizeMin = 0.01;
+  particleSizeMax = 0.08;
 
-function mousemove(event) {
-  mx = event.clientX + 1;
-  my = event.clientY + 1;
-}
-
-function draw(timestamp) {
-  now = timestamp;
-  requestAnimationFrame(draw);
-  ctx.fillStyle = "black";
-  ctx.fillRect(0, 0, w, h);
-  ctx.strokeStyle = "white";
-  for (let i = 10; i < m / 2 - 40; i += 10) {
-    drawCircle(i);
+  constructor() {
+    super();
+    
+    this.build();
   }
-}
 
-function drawCircle(r) {
-  ctx.beginPath();
-  let point, x, y;
-  let deltaAngle = Math.PI * 2 / 400;
-  for (let angle = 0; angle < Math.PI * 2; angle += deltaAngle) {
-    point = calcPoint(angle, r);
-    x = point[0];
-    y = point[1];
-    ctx.lineTo(x, y);
+  build() {
+    
+    this.dot()
+    
+    this.geometry = new THREE.IcosahedronBufferGeometry(1, this.detail);
+
+    this.material = new THREE.PointsMaterial( {
+      map:this.dot(),
+      blending: THREE.AdditiveBlending,
+      color:0x101A88,
+      depthTest:false
+    } )
+
+    this.setupShader(this.material)
+
+    this.mesh = new THREE.Points(this.geometry, this.material);
+    this.add(this.mesh);
   }
-  ctx.closePath();
-  ctx.stroke();
+  
+  dot(size = 32, color = "#FFFFFF"){
+    const sizeH = size * 0.5;
+    
+    const canvas = document.createElement('canvas')
+    canvas.width = canvas.height = size
+    
+    const ctx = canvas.getContext('2d')
+    
+    const circle = new Path2D()
+    circle.arc(sizeH, sizeH, sizeH, 0, 2 * Math.PI);
+    
+    ctx.fillStyle = color;
+    ctx.fill(circle);
+    
+    // debug canvas
+    // canvas.style.position = "fixed"
+    // canvas.style.top = 0
+    // canvas.style.left = 0
+    // document.body.appendChild(canvas)
+    
+    return new THREE.CanvasTexture(canvas)
+  }
+
+  setupShader(material){
+    material.onBeforeCompile = ( shader ) => {
+      shader.uniforms.time = { value: 0 }
+      shader.uniforms.radius = { value: this.radius }
+      shader.uniforms.particleSizeMin = { value: this.particleSizeMin }
+      shader.uniforms.particleSizeMax = { value: this.particleSizeMax }
+      shader.vertexShader = 'uniform float particleSizeMax;\n' + shader.vertexShader;
+      shader.vertexShader = 'uniform float particleSizeMin;\n' + shader.vertexShader;
+      shader.vertexShader = 'uniform float radius;\n' + shader.vertexShader;
+      shader.vertexShader = 'uniform float time;\n' + shader.vertexShader;
+      shader.vertexShader = document.getElementById("webgl-noise").textContent + "\n" + shader.vertexShader;
+      shader.vertexShader = shader.vertexShader.replace(
+        '#include <begin_vertex>',
+        `
+          vec3 p = position;
+          float n = snoise( vec3( p.x*.6 + time*0.2, p.y*0.4 + time*0.3, p.z*.2 + time*0.2) );
+          p += n *0.4;
+
+          // constrain to sphere radius
+          float l = radius / length(p);
+          p *= l;
+          float s = mix(particleSizeMin, particleSizeMax, n);
+          vec3 transformed = vec3( p.x, p.y, p.z );
+        `
+      )
+      shader.vertexShader = shader.vertexShader.replace(
+        'gl_PointSize = size;',
+        'gl_PointSize = s;'
+      )
+
+      material.userData.shader = shader;
+
+    }
+  }
+
+  animate(time) {
+    this.mesh.rotation.set(0, time * 0.2, 0);
+    if(this.material.userData.shader)
+      this.material.userData.shader.uniforms.time.value = time;
+  }
+
 }
 
-function calcPoint(angle, r) {
-  let noiseFactor = mx / w * 50;
-  let zoom = my / h * 200;
-  let x = Math.cos(angle) * r + w / 2;
-  let y = Math.sin(angle) * r + h / 2;
-  n = simplex.noise3D(x / zoom, y / zoom, now / 2000) * noiseFactor;
-  x = Math.cos(angle) * (r + n) + w / 2;
-  y = Math.sin(angle) * (r + n) + h / 2;
-  return [x, y];
-}
-
-setup();
-draw();
+new World();
