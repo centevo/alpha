@@ -14,7 +14,7 @@ const options = {
   text: {
     drawType: drawTypes.STROKE,
     fontColor: [60, 200, 255, 255],
-    fontSize: 120,
+    fontSize: 300,
     get fontStyle() {
       return `${this.fontSize}px Oswald, sans-serif`;
     },
