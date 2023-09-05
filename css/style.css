@@ -27,15 +27,3 @@ div {
 
 
 
-
-#info {
-  position:absolute;
-  
-  left:0px;
-  top:0px;
-  width:auto;
-  max-width:380px;
-  height:auto;
-  background:#f2f2f2;
-  border-bottom-right-radius:10px;
-}
