@@ -1,197 +1,298 @@
-$(window).bind('load', function () {
-    const raf = function (entry) {
-        window.requestAnimationFrame(entry);
-    };
-    const random = function (min, max) {
-        max = max + 1;
-        return Math.floor(Math.random() * (max - min) + min);
+const options = {
+  mouse: {
+    lerpAmt: 0.5,
+    repelThreshold: 100 },
+
+  particles: {
+    density: 3,
+    get pixelDensity() {
+      return (4 - this.density) * 4;
+    },
+    pLerpAmt: 0.25,
+    vLerpAmt: 0.1 },
+
+  text: {
+    drawType: drawTypes.STROKE,
+    fontColor: [60, 200, 255, 255],
+    fontSize: 120,
+    get fontStyle() {
+      return `${this.fontSize}px Oswald, sans-serif`;
+    },
+    message: 'OOVOO' } };
+
+
+const particleProps = [
+'x',
+'y',
+'vx',
+'vy',
+'bx',
+'by'];
+
+const { buffer, ctx } = createRenderingContext();
+
+// Utils: https://codepen.io/seanfree/pen/LvrJWz
+
+let hover = false;
+let userx = 0;
+let usery = 0;
+let repelx = 0;
+let repely = 0;
+let centerx = 0;
+let centery = 0;
+let particles;
+let width;
+let height;
+let imageBuffer;
+let gui;
+let stats;
+
+window.addEventListener('resize', setup);
+window.addEventListener('mousemove', mousemove);
+window.addEventListener('mouseout', mousemove);
+window.addEventListener('load', start);
+
+function start() {
+  createStats();
+  createGUI();
+  setup();
+  run();
+}
+
+function setup() {
+  resize();
+  clearBuffer();
+  setTextStyles();
+  mapParticles();
+}
+
+function run() {
+  requestAnimationFrame(run);
+
+  stats.begin();
+
+  update();
+  render();
+
+  stats.end();
+}
+
+function update() {
+  if (hover) {
+    repelx = lerp(repelx, userx, options.mouse.lerpAmt);
+    repely = lerp(repely, usery, options.mouse.lerpAmt);
+  } else {
+    repelx = lerp(repelx, centerx, options.mouse.lerpAmt);
+    repely = lerp(repely, centery, options.mouse.lerpAmt);
+  }
+}
+
+function render() {
+  clearBuffer();
+  clearScreen();
+  drawParticles();
+  renderFrame();
+}
+
+function mapParticles() {
+  drawMessage();
+
+  const pixelData = new Uint32Array(buffer.getImageData(0, 0, width, height).data);
+  const pixels = [];
+
+  let i, x, y, bx, by, vx, vy;
+
+  for (i = 0; i < pixelData.length; i += 4) {
+    if (pixelData[i + 3] && !(i % options.particles.pixelDensity)) {
+      x = rand(width) | 0;
+      y = rand(height) | 0;
+      bx = i / 4 % width;
+      by = i / 4 / width | 0;
+      vx = 0;
+      vy = 0;
+
+      pixels.push(x, y, vx, vy, bx, by);
     }
-    var app = {
-        init: function () {
-            this.cacheDOM();
-            this.style();
-        },
-        cacheDOM: function () {
-            this.container = $('#container');
-            this.images = $('img');
+  }
 
-            this.mouseX = null;
-            this.mouseY = null;
-        },
-        style: function () {
-            this.images.imagesLoaded(function () {
-                $(window).resize(function initial() {
-                    TweenMax.set(app.container, {
-                        opacity: 1
-                    });
-                    return initial;
-                }());
-            });
-        },
-        cursorEvents: function (e) {
-            app.mouseX = e.clientX;
-            app.mouseY = e.clientY;
-        }
-    }
+  particles = new PropsArray(pixels.length / particleProps.length, particleProps);
+  particles.set(pixels, 0);
+}
 
-    app.init();
+function drawParticles() {
+  let i, index, x, _x, y, _y, vx, vy, bx, by;
 
-    var cContainer = $('#c-container'),
-        c = document.getElementById('c'),
-        c2Container = $('#c2-container'),
-        c2 = document.getElementById('c2'),
-        cx = c.getContext('2d'),
-        c2x = c2.getContext('2d'),
-        particleIndex = 0,
-        particles = {},
-        particleNum = 1,
-        particlesLoaded = false,
-        Particle,
-        Particle2,
-        canvas,
-        canvas2;
+  imageBuffer.data.fill(0);
 
-    c.width = $('#c').outerWidth();
-    c.height = $('#c').outerHeight();
+  particles.forEach(([x, y, vx, vy, bx, by], index) => {
+    _x = x | 0;
+    _y = y | 0;
 
-    c2.width = $('#c2').outerWidth();
-    c2.height = $('#c2').outerHeight();
+    if (!outOfBounds(_x, _y, width, height)) {
+      i = 4 * (_x + _y * width);
 
-    //INITIAL CANVAS DRAW
-    cx.fillStyle = 'rgba(0,0,0,1)';
-    cx.fillRect(0, 0, c.width, c.height);
-    c2x.fillStyle = 'rgba(0,0,0,1)';
-    c2x.fillRect(0, 0, c2.width, c2.height);
-
-    function particleFactory(thisCanvas, thisContext, thisParticleName, thisCanvasFunction) {
-
-        var particleIndex = 0,
-            particles = {},
-            particleNum = 2,
-            particlesLoaded = false;
-
-        thisParticleName = function () {
-            this.r = 8;
-            this.rStart = this.r;
-            this.rIncrement = this.r * -0.01;
-            this.x = thisCanvas.width / 2;
-            this.y = thisCanvas.height / 2;
-          
-            this.vxIsNegative = random(1,2);
-          
-            this.originTriggered = false;
-            this.vx = this.vxIsNegative === 1 ? random(0,50) * -0.1 : random(0,50) * 0.1;
-            this.vxMult = random(10,20) * 0.1;
-            this.vy = random(-10, 10);
-            this.vyMult = random(2,6) * -0.1;
-            this.opacityLimit = 1;
-            this.opacity = 1;
-            this.opacityIncrement = 0.05;
-            this.opacityReversing = false;
-            this.gravity = 1;
-            this.framerate = 0;
-            this.framerateCounter = this.framerate;
-            this.counter = 0;
-            particleIndex++;
-            particles[particleIndex] = this;
-            this.id = particleIndex;
-            this.life = 0;
-            this.maxLife = random(0, 100);
-            this.hue = random(30, 60);
-            this.light = random(50, 100);
-            this.color = `hsla(${this.hue},100%,${this.light}%,${this.opacity})`;
-          
-            this.bounced = false;
-          
-            this.duration = 60;
-            this.durationTotal = this.duration + this.opacityLimit * 10;
-            this.durationCounter = 0;
-        }
-
-        thisParticleName.prototype.draw = function () {
-
-            if ((!this.originTriggered) && (app.mouseX != null)) {
-                this.originTriggered = true;
-                this.x = app.mouseX;
-                this.y = app.mouseY;
-            }
-            this.color = `hsla(${this.hue},100%,${this.light}%,${this.opacity})`;
-            thisContext.fillStyle = this.color;
-            thisContext.beginPath();
-            thisContext.arc(this.x, this.y, this.r, 0, 2 * Math.PI);
-            thisContext.fill();
-
-            //START DRAW OPERATION
-            this.r += this.rIncrement;
-            this.x += this.vx;
-            this.y += this.vy;
-            this.durationCounter++;
-            if (this.vx === 0) {
-                this.vx++;
-            }
-            if (this.vxIsNegative === 1) {
-                this.vx
-            }
-            if (this.vy === 0) {
-                this.vy++;
-            }
-            if (this.y > thisCanvas.height - this.rStart) {
-                if (!this.bounced) {
-                  this.vx *= this.vxMult;
-                } else {
-                  this.vx *= 0.9;
-                }
-                this.bounced = true;
-                this.vy *= this.vyMult;
-                this.y = thisCanvas.height - this.rStart;
-            }
-            this.vy += this.gravity;
-            if ((this.r <= 0)) {
-                delete particles[this.id];
-            }
-            this.life++;
-            //END DRAW OPERATION
-        }
-
-        thisCanvasFunction = function () {
-            thisContext.globalCompositeOperation = 'source-over';
-            thisContext.fillStyle = 'rgba(0,0,0,1)';
-            thisContext.fillRect(0, 0, thisCanvas.width, thisCanvas.height);
-            if (!particlesLoaded) {
-                for (var i = 0; i < particleNum; i++) {
-                    new thisParticleName();
-                }
-            }
-            thisContext.globalCompositeOperation = 'lighter';
-            for (var i in particles) {
-                particles[i].draw();
-            }
-        }
-        setInterval(thisCanvasFunction, 15);
+      fillPixel(imageBuffer, i, options.text.fontColor);
     }
 
-    $(window).resize(function initial() {
-        window.addEventListener('mousemove', app.cursorEvents, false);
+    particles.set(updatePixelCoords(x, y, vx, vy, bx, by), index);
+  });
 
-        c.width = $('#c').outerWidth();
-        c.height = $('#c').outerHeight();
+  buffer.putImageData(imageBuffer, 0, 0);
+}
 
-        c2.width = $('#c2').outerWidth();
-        c2.height = $('#c2').outerHeight();
+function fillPixel(imageData, i, [r, g, b, a]) {
+  imageData.data.set([r, g, b, a], i);
+}
 
-        return initial;
-    }());
+function updatePixelCoords(x, y, vx, vy, bx, by) {
+  let rd, dx, dy, phi, f;
 
-    particleFactory(c, cx, Particle, canvas);
-    particleFactory(c2, c2x, Particle2, canvas2);
+  rd = dist(x, y, repelx, repely);
 
-    TweenMax.set(c2Container, {
-        transformOrigin: 'center bottom',
-        scaleY: -1,
-        opacity: 1
-    });
+  phi = angle(repelx, repely, x, y);
+  f = pow(options.mouse.repelThreshold, 2) / rd * (rd / options.mouse.repelThreshold);
 
-    TweenMax.set(c2, {
-        filter: 'blur(10px)'
-    });
-});
+  dx = bx - x;
+  dy = by - y;
+
+  vx = lerp(vx, dx + cos(phi) * f, options.particles.vLerpAmt);
+  vy = lerp(vy, dy + sin(phi) * f, options.particles.vLerpAmt);
+
+  x = lerp(x, x + vx, options.particles.pLerpAmt);
+  y = lerp(y, y + vy, options.particles.pLerpAmt);
+
+  return [x, y, vx, vy];
+}
+
+function outOfBounds(x, y, width, height) {
+  return x < 0 || x >= width || y < 0 || y >= height;
+}
+
+function renderFrame() {
+  ctx.save();
+
+  ctx.filter = 'blur(8px) brightness(200%)';
+  ctx.drawImage(buffer.canvas, 0, 0);
+
+  ctx.filter = 'blur(0)';
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.drawImage(buffer.canvas, 0, 0);
+
+  ctx.restore();
+}
+
+function clearScreen() {
+  clear(ctx);
+}
+
+function clearBuffer() {
+  clear(buffer);
+}
+
+function clear(_ctx) {
+  _ctx.clearRect(0, 0, _ctx.canvas.width, _ctx.canvas.height);
+}
+
+function drawMessage() {
+  drawText(
+  options.text.message,
+  centerx,
+  centery,
+  options.text.drawType);
+
+}
+
+function setTextStyles() {
+  setFont(options.text.fontStyle);
+  setTextBaseline(textBaselineTypes.MIDDLE);
+  setTextAlign(textAlignTypes.CENTER);
+}
+
+function drawText(str = '', x = 0, y = 0, type = drawTypes.FILL) {
+  buffer[`${type}Text`](str, x, y);
+}
+
+function setFont(font) {
+  buffer.font = font;
+}
+
+function setTextAlign(align = textAlignTypes.LEFT) {
+  buffer.textAlign = align;
+}
+
+function setTextBaseline(baseline = textBaselineTypes.ALPHABETIC) {
+  buffer.textBaseline = baseline;
+}
+
+function resize() {
+  buffer.canvas.width = width = innerWidth;
+  buffer.canvas.height = height = innerHeight;
+
+  buffer.drawImage(ctx.canvas, 0, 0);
+
+  ctx.canvas.width = innerWidth;
+  ctx.canvas.height = innerHeight;
+
+  ctx.drawImage(buffer.canvas, 0, 0);
+
+  centerx = 0.5 * innerWidth;
+  centery = 0.5 * innerHeight;
+
+  imageBuffer = buffer.createImageData(width, height);
+}
+
+function mousemove({ type, clientX, clientY }) {
+  hover = type === 'mousemove';
+  userx = clientX;
+  usery = clientY;
+}
+
+function createStats() {
+  stats = new Stats();
+  document.body.appendChild(stats.domElement);
+  stats.domElement.style.position = 'absolute';
+}
+
+function createGUI() {
+  gui = new dat.GUI();
+
+  addTextOptions();
+  addMouseOptions();
+  addParticleOptions();
+}
+
+function addTextOptions() {
+  const textFolder = gui.addFolder('text');
+
+  textFolder.add(options.text, 'drawType', Object.values(drawTypes)).
+  onFinishChange(setup);
+  textFolder.addColor(options.text, 'fontColor');
+  textFolder.add(options.text, 'fontSize', 20, 200).
+  onFinishChange(setup);
+  textFolder.add(options.text, 'message').
+  onFinishChange(setup);
+
+  textFolder.open();
+}
+
+function addMouseOptions() {
+  const mouseFolder = gui.addFolder('mouse');
+
+  mouseFolder.add(options.mouse, 'lerpAmt', 0.05, 1);
+  mouseFolder.add(options.mouse, 'repelThreshold', 20, 200);
+
+  mouseFolder.open();
+}
+
+function addParticleOptions() {
+  const particlesFolder = gui.addFolder('particles');
+
+  particlesFolder.add(options.particles, 'density', 1, 4, 1).
+  onFinishChange(setup);
+  particlesFolder.add(options.particles, 'pLerpAmt', 0.05, 1).
+  onFinishChange(setup);
+  particlesFolder.add(options.particles, 'vLerpAmt', 0.05, 1).
+  onFinishChange(setup);
+
+  particlesFolder.open();
+}
