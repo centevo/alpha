@@ -21,9 +21,9 @@ h1 {
 
 #info {
   position:absolute;
-  opacity: 0.9;
-  left:100px;
-  top:100px;
+  
+  left:0px;
+  top:0px;
   width:auto;
   max-width:380px;
   height:auto;
