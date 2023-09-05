@@ -1,94 +1,109 @@
-<!DOCTYPE html>
-<html lang="en" >
+<!DOCTYPE HTML>
+<html>
+
 <head>
-  <meta charset="UTF-8">
-  <title>oovoo.app</title>
-  <link rel="stylesheet" href="css/style.css">
-
+    <title>proton.js-zone-dead</title>
+    <meta name="viewport" id="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta charset="utf-8">
+    <style type="text/css">
+        body {
+            background-color: #333333;
+            margin: 0px;
+            overflow: hidden;
+        }
+        
+        #container {
+            width:100%;
+            height:100%;
+        }
+        
+        #testCanvas {
+            background: #000000;
+        }
+    </style>
 </head>
+
 <body>
+    <div id="container">
+        <canvas id="testCanvas"></canvas>
+    </div>
+    <script src="../../lib/stats.min.js"></script>
+    <script src="../../lib/proton.min.js"></script>
+    <script>
+        var canvas;
+        var context;
+        var proton;
+        var renderer;
+        var emitter;
+        var stats;
+        var textures;
 
-  <div id="info">
+        main();
 
-  <h1>oovoo.app</h1>
-  </div>
+        function main() {
+            canvas = document.getElementById("testCanvas");
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            //context = canvas.getContext('2d');
+            addStats();
 
+            textures = [];
+            var str = 'proton';
+            for (var i = 0; i < str.length; i++) {
+                var url = 'image/' + str.substr(i, 1) + '.png';
+                textures.push(url);
+            }
 
+            createProton();
+            tick();
+        }
 
-<!-- partial:index.partial.html -->
-<div id="container"></div>
-<script id="vertexShader" type="x-shader/x-vertex">
+        function addStats() {
+            stats = new Stats();
+            stats.setMode(2);
+            stats.domElement.style.position = 'absolute';
+            stats.domElement.style.left = '0px';
+            stats.domElement.style.top = '0px';
+            document.getElementById('container').appendChild(stats.domElement);
+        }
 
-  void main() {
-    gl_Position = vec4(position, 1.0);
-  }
+        function createProton() {
+            proton = new Proton;
+            emitter = new Proton.Emitter();
+            //add rate
+            emitter.rate = new Proton.Rate(new Proton.Span(10, 20), new Proton.Span(.1, .5));
+            //add initialize
 
-</script>
+            emitter.addInitialize(new Proton.Mass(1));
+            emitter.addInitialize(new Proton.Body(textures));
+            emitter.addInitialize(new Proton.Life(8, 15));
+            emitter.addInitialize(new Proton.Position(new Proton.CircleZone(canvas.width / 2, canvas.height / 2, 100)));
+            emitter.addInitialize(new Proton.Velocity(new Proton.Span(2, 4), new Proton.Span(0, 360), 'polar'));
+            //add behaviour
 
-<script id="fragmentShader" type="x-shader/x-fragment">
+            emitter.addBehaviour(new Proton.Alpha(1, 0), new Proton.Color('random'));
+            emitter.addBehaviour(new Proton.Scale(Proton.getSpan(.2, 1)));
+            emitter.addBehaviour(new Proton.RandomDrift(10, 10, .05));
+            var crosszone = new Proton.CrossZone(new Proton.CircleZone(canvas.width / 2, canvas.height / 2, 280), 'bound');
+            emitter.addBehaviour(crosszone);
+            
+            emitter.emit();
+            proton.addEmitter(emitter);
 
-  uniform vec2 iResolution;
-  uniform float iGlobalTime;
+            //add render
+            renderer = new Proton.WebGLRenderer(canvas);
+            renderer.blendFunc("SRC_ALPHA", "ONE");
+            proton.addRenderer(renderer);
+        }
 
-  // Some utils first
+        function tick() {
+            requestAnimationFrame(tick);
 
-  // From Stackoveflow
-  // http://stackoverflow.com/questions/15095909/from-rgb-to-hsv-in-opengl-glsl
-  vec3 hsv2rgb(vec3 c)
-  {
-      vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
-      vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
-      return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
-  }
-
-  // Simplex 2D noise
-  // from https://gist.github.com/patriciogonzalezvivo/670c22f3966e662d2f83
-  vec3 permute(vec3 x) { return mod(((x*34.0)+1.0)*x, 289.0); }
-
-  float snoise(vec2 v){
-      const vec4 C = vec4(0.211324865405187, 0.366025403784439,
-                          -0.577350269189626, 0.024390243902439);
-      vec2 i  = floor(v + dot(v, C.yy) );
-      vec2 x0 = v -   i + dot(i, C.xx);
-      vec2 i1;
-      i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
-      vec4 x12 = x0.xyxy + C.xxzz;
-      x12.xy -= i1;
-      i = mod(i, 289.0);
-      vec3 p = permute( permute( i.y + vec3(0.0, i1.y, 1.0 ))
-                       + i.x + vec3(0.0, i1.x, 1.0 ));
-      vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy),
-                              dot(x12.zw,x12.zw)), 0.0);
-      m = m*m ;
-      m = m*m ;
-      vec3 x = 2.0 * fract(p * C.www) - 1.0;
-      vec3 h = abs(x) - 0.5;
-      vec3 ox = floor(x + 0.5);
-      vec3 a0 = x - ox;
-      m *= 1.79284291400159 - 0.85373472095314 * ( a0*a0 + h*h );
-      vec3 g;
-      g.x  = a0.x  * x0.x  + h.x  * x0.y;
-      g.yz = a0.yz * x12.xz + h.yz * x12.yw;
-      return 130.0 * dot(m, g);
-  }
-
-	// This is my code
-  void main(void)
-  {
-		vec2 uv = gl_FragCoord.xy / iResolution.xy;
-    float xnoise = snoise(vec2(uv.x, iGlobalTime / 5.0 + 10000.0));
-    float ynoise = snoise(vec2(uv.y, iGlobalTime / 5.0 + 500.0));
-    vec2 t = vec2(xnoise, ynoise);
-    float s1 = snoise(uv + t / 2.0 + snoise(uv + snoise(uv + t/3.0) / 5.0));
-    float s2 = snoise(uv + snoise(uv + s1) / 7.0);
-    vec3 hsv = vec3(s1, 1.0, 1.0-s2);
-    vec3 rgb = hsv2rgb(hsv);
-		gl_FragColor = vec4(rgb, 1.0);
-	}
-
-</script>
-<!-- partial -->
-  <script src='https://cdnjs.cloudflare.com/ajax/libs/three.js/84/three.min.js'></script><script  src="js/script.js"></script>
-
+            stats.begin();
+            proton.update();
+            stats.end();
+        }
+    </script>
 </body>
+
 </html>
