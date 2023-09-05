@@ -2,15 +2,29 @@
 <html lang="en" >
 <head>
   <meta charset="UTF-8">
-  <title>CodePen - deformable particles</title>
-  <link rel="stylesheet" href="css/style.css">
+  <title>CodePen - Fluid Simulation</title>
+  <link rel="stylesheet" href="./style.css">
 
 </head>
 <body>
 <!-- partial:index.partial.html -->
-<div id="jsi-particle-container" class="container"></div>
+<canvas id= "c"> </canvas>
+<button id="reset">new colours</button>
+<div id="info">
+  <div id="top">
+  <a id="close" href="">close</a>
+  </div>
+  <p>
+    <br>
+      - Alter particles/groups with the GROUPS variable.<br><br>
+    - Customize colours with GROUP_COLOURS.<br><br>
+    - Use the mouse to move the fluid.<br><br>
+    - Click anywhere to make water.<br><br>
+    - Use one group for a more water-like effect.<br><br>
+  </p>
+</div>
 <!-- partial -->
-  <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js'></script><script  src="js/script.js"></script>
+  <script  src="./script.js"></script>
 
 </body>
 </html>
