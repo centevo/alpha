@@ -7,16 +7,14 @@ canvas {
 }
 
 .hide {
-  display: ;
   color: white;
-position:absolute;
-left:0px;
-top:0px;
-width:auto;
-max-width:380px;
+  position:absolute;
+  left:0px;
+  top:0px;
+  width:auto;
+  max-width:380px;
   height:auto;
   
-  border-bottom-right-radius:10px;
 
   
 }
