@@ -1,14 +1,6 @@
-body, html {
+body {
+  height: 100vh;
   margin: 0;
-}
-
-canvas {
-  display: block;
-}
-
-.hide {
-  display: none;
-}
-div {
-  color: white;
+  background-image: radial-gradient(circle farthest-corner, #060A33, #000000);
+  background-repeat: no-repeat;
 }
