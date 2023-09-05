@@ -5,3 +5,23 @@ body, html {
 canvas {
   display: block;
 }
+
+
+
+h1 {
+  font-size: 80px;
+  mix-blend-mode: screen;
+}
+
+
+#info {
+  position:absolute;
+  opacity: 0.7;
+  left:100px;
+  top:100px;
+  width:auto;
+  max-width:380px;
+  height:auto;
+
+  border-bottom-right-radius:10px;
+}
