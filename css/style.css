@@ -12,3 +12,21 @@ canvas {
 div {
   color: white;
 }
+
+
+h1 {
+  font-size: 80px;
+}
+
+
+#info {
+  position:absolute;
+  opacity: 0.9;
+  left:100px;
+  top:100px;
+  width:auto;
+  max-width:380px;
+  height:auto;
+
+  border-bottom-right-radius:10px;
+}
