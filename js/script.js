@@ -99,7 +99,7 @@ class CreateParticles {
 
 			text: 'OOVOO\nAPP',
 			amount: 1500,
-			particleSize: .4,
+			particleSize: .8,
 			particleColor: 0xffffff,
 			textSize: 16,
 			area: 250,
