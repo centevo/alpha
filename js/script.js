@@ -98,7 +98,7 @@ class CreateParticles {
 		this.data = {
 
 			text: 'OOVOO',
-			amount: 5000,
+			amount: 1300,
 			particleSize: .8,
 			particleColor: 0xffffff,
 			textSize: 16,
