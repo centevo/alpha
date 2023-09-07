@@ -101,7 +101,7 @@ class CreateParticles {
 			amount: 1300,
 			particleSize: .8,
 			particleColor: 0xffffff,
-			textSize: 16,
+			textSize: 26,
 			area: 250,
 			ease: .05,
 		}
