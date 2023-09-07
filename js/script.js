@@ -97,8 +97,8 @@ class CreateParticles {
 
 		this.data = {
 
-			text: 'OOVOO\nAPP',
-			amount: 1500,
+			text: 'OOVOO\nDOWNLOAD',
+			amount: 2000,
 			particleSize: .8,
 			particleColor: 0xffffff,
 			textSize: 16,
