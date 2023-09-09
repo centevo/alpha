@@ -1,32 +1,49 @@
-@import url('https://fonts.googleapis.com/css2?family=Inconsolata:wght@200;300;400;900&display=swap');
-
 body {
-  margin: 0;
-  padding: 0;
-  background: #000fff;
-  color: transparent;
-  font-family: 'Inconsolata', monospace;
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
+    margin: 0;
+    padding: 0;
+    background: white;
+    overflow: hidden;
 }
-* {
-  user-select: none;
+section {
+    background: #ffee25;
 }
-.word {
-  position: absolute;
-  cursor: grab;
-  font-size: 30px;
-  color: #ffeb3b;
-}
-.word.highlighted {
-  font-weight: bold;
-  color: black;
+p {
+    font-size: 13px;
+    line-height: 10px;
+    background:  url(https://media.giphy.com/media/41x8G9RQjdKSKbO7it/giphy.webp) no-repeat;
+/*   Artwork by Xaviera López */
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: rgba(255, 255, 255, 0) ;
+    font-weight: 900;
+    margin: 0;
+    mix-blend-mode: darken;
+/*   try different modes! */
 }
 
-a {
-  text-decoration: none;
+
+
+
+
+
+/* Twitter link */
+
+footer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  padding: 10px;
+  border-bottom-left-radius: 8px;
+  height: 10px;
+  display: flex;
+  justify-content: center;
+}
+footer a {
   color: black;
-  display: block;
-  padding: 1rem;
+  text-decoration: none;
+  font-weight: 600;
+  display: flex;
+    align-items: center;
 }
