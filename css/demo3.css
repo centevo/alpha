@@ -3,7 +3,8 @@
 /* Color schemes */
 .demo-3 {
 	--color-text: #fff;
-	--color-bg: #6314e0;
+	--color-bg: #000 url(../img/set4/0.jpg) no-repeat;
+	
 	--color-link: #93fbfb;
 	--color-link-hover: #fff;
 	--color-info: #fff;
