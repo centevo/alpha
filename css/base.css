@@ -126,7 +126,7 @@ main {
 }
 
 .codrops-links {
-	position: relative;
+	position: fixed;
 	display: flex;
 	justify-content: center;
 	text-align: center;
