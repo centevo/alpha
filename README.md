@@ -1,21 +1,19 @@
-# Scrolling Letters Animation
+# Gradient Topography Animation
 
-A switching title effect where a fixed element changes depending on the scroll position. 
+Shape layers animation based on Polar Vector's work [Gradient Topography](https://polarvectors.com/shop/textures/gradient-topography/) designed by Diana Hlevnjak.
 
-![Scrolling Letters Animation](https://tympanus.net/codrops/wp-content/uploads/2018/02/ScrollingLettersAnimation_Featured.jpg)
+![Gradient Topography Animation](https://tympanus.net/codrops/wp-content/uploads/2018/01/GradientTopographyAnimation_Featured-1.jpg)
 
-[Article on Codrops](https://tympanus.net/codrops/?p=33990)
+[Article on Codrops](https://tympanus.net/codrops/?p=33779)
 
-[Demo](http://tympanus.net/Development/ScrollingLettersAnimation/)
+[Demo](http://tympanus.net/Development/GradientTopographyAnimation/)
+
+This demo is kindly sponsored by [monday.com: The perfect project management tool for designers](http://go.thoughtleaders.io/MondayCodrops230118)
 
 ## Credits
 
-- Hand-drawn skull set by [Freepik](https://www.freepik.com/free-vector/set-of-hand-drawn-skulls_1389312.htm)
-- Images made from the ["Flight" Collection](https://creativemarket.com/RuleByArt/468537-Flight) copyright by [RuleByArt](https://rulebyart.com/)
-- Images by [Unsplash.com](https://unsplash.com/)
-- [anime.js](http://anime-js.com/) by Julian Garnier
-- [imagesLoaded](http://imagesloaded.desandro.com/) by Dave DeSandro
-- [Charming.js](https://github.com/yuanqing/charming) by Yuan Qing
+- [anime.js](http://animejs.com/) by Julian Garnier
+- [Charming](https://github.com/yuanqing/charming) by Yuan Qing
 
 ## License
 This resource can be used freely if integrated or build upon in personal or commercial projects such as websites, web apps and web templates intended for sale. It is not allowed to take the resource "as-is" and sell it, redistribute, re-publish it, or sell "pluginized" versions of it. Free plugins built using this resource should have a visible mention and link to the original work. Always consider the licenses of all included libraries, scripts and images used.
