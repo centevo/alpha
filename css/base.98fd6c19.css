@@ -28,6 +28,16 @@ body {
     --cursor-stroke-width: 1px;
 }
 
+body #cdawrap {
+	--cda-left: auto;
+    --cda-right: 2rem;
+    --cda-width: 180px;
+    --cda-text-align: right;
+    --footer-align: end;
+    --cda-top: auto;
+    --cda-bottom: 2rem;
+}
+
 .hidden {
 	position: absolute;
 	overflow: hidden;
@@ -160,11 +170,11 @@ main {
 }
 
 .bg-gallery__item:nth-child(-n+3) {
-    align-self: start; 
+    align-self: start;
 }
 
 .bg-gallery__item:nth-child(n+4) {
-    align-self: end;  
+    align-self: end;
 }
 
 .bg-gallery--1 .bg-gallery__item:nth-child(1) { grid-area: 3 / 2 / auto / auto;}
@@ -311,7 +321,7 @@ main {
 }
 
 .js .page {
-	grid-area: content; 
+	grid-area: content;
 }
 
 .js .page--preview {
@@ -477,11 +487,11 @@ main {
 		max-width: 1000px;
 	}
 	.content {
-		grid-template-areas: "back back" 
-						"title title" 
+		grid-template-areas: "back back"
+						"title title"
 						"intro date"
 						"gallery gallery";
-	}	
+	}
 }
 
 
