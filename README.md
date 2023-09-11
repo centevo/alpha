@@ -1,27 +1,30 @@
-# Collapsing Logo Effect
+# Elastic Circle Slideshow
 
-A recreation of the collapsing logo effect seen on [PracticalVR](https://experience.practicalvr.com/).
+A very simple content slideshow with circular slides and an elastic, bouncy navigation effect. Inspired by the Dribbble shot ["Mobile Commerce Interface"](https://dribbble.com/shots/2197260-Mobile-Commerce-Interface) by Bilal Mechairia.
 
-![Collapsing Logo Effect](https://tympanus.net/codrops/wp-content/uploads/2018/06/CollapsingLogoEffect_featured.jpg)
+[Article on Codrops](http://tympanus.net/codrops/?p=25964)
 
-[Article on Codrops](https://tympanus.net/codrops/?p=35022)
+[Demo](http://tympanus.net/Development/ElasticCircleSlideshow/)
 
-[Demo](http://tympanus.net/Development/CollapsingLogo/)
+## License
+
+Integrate or build upon it for free in your personal or commercial projects. Don't republish, redistribute or sell "as-is". 
+
+Read more here: [License](http://tympanus.net/codrops/licensing/)
 
 ## Credits
 
-- Images from [Unsplash.com](http://unsplash.com)
-- [anime.js](http://animejs.com/) by Julian Garnier
+[Dynamic.js](http://dynamicsjs.com/) by Michael Villar
 
-## License
-This resource can be used freely if integrated or build upon in personal or commercial projects such as websites, web apps and web templates intended for sale. It is not allowed to take the resource "as-is" and sell it, redistribute, re-publish it, or sell "pluginized" versions of it. Free plugins built using this resource should have a visible mention and link to the original work. Always consider the licenses of all included libraries, scripts and images used.
+[Bottle mockups by forgraphic](http://forgraphictm.com/)
+
+[Font Awesome](https://fortawesome.github.io/Font-Awesome/) created by [Dave Gandy](https://twitter.com/davegandy). License: [Font Awesome license information](http://fontawesome.io/license).
 
 ## Misc
 
-Follow Codrops: [Twitter](http://www.twitter.com/codrops), [Facebook](http://www.facebook.com/codrops), [Google+](https://plus.google.com/101095823814290637419), [GitHub](https://github.com/codrops), [Pinterest](http://www.pinterest.com/codrops/), [Instagram](https://www.instagram.com/codropsss/)
+Follow Codrops: [Twitter](http://www.twitter.com/codrops), [Facebook](http://www.facebook.com/pages/Codrops/159107397912), [Google+](https://plus.google.com/101095823814290637419), [GitHub](https://github.com/codrops), [Pinterest](http://www.pinterest.com/codrops/)
 
-
-[© Codrops 2018](http://www.codrops.com)
+[© Codrops 2016](http://www.codrops.com)
 
 
 
