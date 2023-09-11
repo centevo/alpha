@@ -1,19 +1,17 @@
-# Multibox Menu
+# Collapsing Logo Effect
 
-A simple grid-powered multibox menu that shows with a reveal animation.
+A recreation of the collapsing logo effect seen on [PracticalVR](https://experience.practicalvr.com/).
 
-![Multibox Menu](https://tympanus.net/codrops/wp-content/uploads/2018/10/MultiboxMenu.jpg)
+![Collapsing Logo Effect](https://tympanus.net/codrops/wp-content/uploads/2018/06/CollapsingLogoEffect_featured.jpg)
 
-[Article on Codrops](https://tympanus.net/codrops/?p=36043)
+[Article on Codrops](https://tympanus.net/codrops/?p=35022)
 
-[Demo](http://tympanus.net/Development/MultiboxMenu/)
+[Demo](http://tympanus.net/Development/CollapsingLogo/)
 
 ## Credits
 
-- [imagesLoaded](https://imagesloaded.desandro.com/) by Dave DeSandro
-- [TweenMax](https://greensock.com/tweenmax) by Greensock
-- Images from [Unsplash.com](https://unsplash.com/)
-- Map made with [Fantasy Map Generator](https://azgaar.github.io/Fantasy-Map-Generator/)
+- Images from [Unsplash.com](http://unsplash.com)
+- [anime.js](http://animejs.com/) by Julian Garnier
 
 ## License
 This resource can be used freely if integrated or build upon in personal or commercial projects such as websites, web apps and web templates intended for sale. It is not allowed to take the resource "as-is" and sell it, redistribute, re-publish it, or sell "pluginized" versions of it. Free plugins built using this resource should have a visible mention and link to the original work. Always consider the licenses of all included libraries, scripts and images used.
