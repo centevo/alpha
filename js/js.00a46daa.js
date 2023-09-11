@@ -117,659 +117,509 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 
   return newRequire;
-})({"BQvw":[function(require,module,exports) {
+})({"oR66":[function(require,module,exports) {
+
+},{}],"Qdhu":[function(require,module,exports) {
 var define;
 var global = arguments[3];
+(function (global, factory) {
+	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
+	typeof define === 'function' && define.amd ? define(factory) :
+	(global.Splitting = factory());
+}(this, (function () { 'use strict';
+
+var root = document;
+var createText = root.createTextNode.bind(root);
+
 /**
- * EvEmitter v1.1.0
- * Lil' event emitter
- * MIT License
+ * # setProperty
+ * Apply a CSS var
+ * @param el{HTMLElement} 
+ * @param varName {string} 
+ * @param value {string|number}  
  */
+function setProperty(el, varName, value) {
+    el.style.setProperty(varName, value);
+} 
 
-/* jshint unused: true, undef: true, strict: true */
+/**
+ * 
+ * @param {Node} el 
+ * @param {Node} child 
+ */
+function appendChild(el, child) {
+  return el.appendChild(child);
+}
 
-( function( global, factory ) {
-  // universal module definition
-  /* jshint strict: false */ /* globals define, module, window */
-  if ( typeof define == 'function' && define.amd ) {
-    // AMD - RequireJS
-    define( factory );
-  } else if ( typeof module == 'object' && module.exports ) {
-    // CommonJS - Browserify, Webpack
-    module.exports = factory();
-  } else {
-    // Browser globals
-    global.EvEmitter = factory();
+function createElement(parent, key, text, whitespace) {
+  var el = root.createElement('span');
+  key && (el.className = key); 
+  if (text) { 
+      !whitespace && el.setAttribute("data-" + key, text);
+      el.textContent = text; 
   }
+  return (parent && appendChild(parent, el)) || el;
+}
 
-}( typeof window != 'undefined' ? window : this, function() {
+function getData(el, key) {
+  return el.getAttribute("data-" + key)
+}
 
-"use strict";
+/**
+ * 
+ * @param e {import('../types').Target} 
+ * @param parent {HTMLElement}
+ * @returns {HTMLElement[]}
+ */
+function $(e, parent) {
+    return !e || e.length == 0
+        ? // null or empty string returns empty array
+          []
+        : e.nodeName
+            ? // a single element is wrapped in an array
+              [e]
+            : // selector and NodeList are converted to Element[]
+              [].slice.call(e[0].nodeName ? e : (parent || root).querySelectorAll(e));
+}
 
-function EvEmitter() {}
-
-var proto = EvEmitter.prototype;
-
-proto.on = function( eventName, listener ) {
-  if ( !eventName || !listener ) {
-    return;
-  }
-  // set events hash
-  var events = this._events = this._events || {};
-  // set listeners array
-  var listeners = events[ eventName ] = events[ eventName ] || [];
-  // only add once
-  if ( listeners.indexOf( listener ) == -1 ) {
-    listeners.push( listener );
-  }
-
-  return this;
-};
-
-proto.once = function( eventName, listener ) {
-  if ( !eventName || !listener ) {
-    return;
-  }
-  // add event
-  this.on( eventName, listener );
-  // set once flag
-  // set onceEvents hash
-  var onceEvents = this._onceEvents = this._onceEvents || {};
-  // set onceListeners object
-  var onceListeners = onceEvents[ eventName ] = onceEvents[ eventName ] || {};
-  // set flag
-  onceListeners[ listener ] = true;
-
-  return this;
-};
-
-proto.off = function( eventName, listener ) {
-  var listeners = this._events && this._events[ eventName ];
-  if ( !listeners || !listeners.length ) {
-    return;
-  }
-  var index = listeners.indexOf( listener );
-  if ( index != -1 ) {
-    listeners.splice( index, 1 );
-  }
-
-  return this;
-};
-
-proto.emitEvent = function( eventName, args ) {
-  var listeners = this._events && this._events[ eventName ];
-  if ( !listeners || !listeners.length ) {
-    return;
-  }
-  // copy over to avoid interference if .off() in listener
-  listeners = listeners.slice(0);
-  args = args || [];
-  // once stuff
-  var onceListeners = this._onceEvents && this._onceEvents[ eventName ];
-
-  for ( var i=0; i < listeners.length; i++ ) {
-    var listener = listeners[i]
-    var isOnce = onceListeners && onceListeners[ listener ];
-    if ( isOnce ) {
-      // remove listener
-      // remove before trigger to prevent recursion
-      this.off( eventName, listener );
-      // unset once flag
-      delete onceListeners[ listener ];
+/**
+ * Creates and fills an array with the value provided
+ * @template {T}
+ * @param {number} len
+ * @param {() => T} valueProvider
+ * @return {T}
+ */
+function Array2D(len) {
+    var a = [];
+    for (; len--; ) {
+        a[len] = [];
     }
-    // trigger listener
-    listener.apply( this, args );
-  }
+    return a;
+}
 
-  return this;
-};
+function each(items, fn) {
+    items && items.some(fn);
+}
 
-proto.allOff = function() {
-  delete this._events;
-  delete this._onceEvents;
-};
+function selectFrom(obj) {
+    return function (key) {
+        return obj[key];
+    }
+}
 
-return EvEmitter;
-
-}));
-
-},{}],"lc7f":[function(require,module,exports) {
-var define;
-/*!
- * imagesLoaded v4.1.4
- * JavaScript is all like "You images are done yet or what?"
- * MIT License
+/**
+ * # Splitting.index
+ * Index split elements and add them to a Splitting instance.
+ *
+ * @param element {HTMLElement}
+ * @param key {string}
+ * @param items {HTMLElement[] | HTMLElement[][]}
  */
+function index(element, key, items) {
+    var prefix = '--' + key;
+    var cssVar = prefix + "-index";
 
-( function( window, factory ) { 'use strict';
-  // universal module definition
-
-  /*global define: false, module: false, require: false */
-
-  if ( typeof define == 'function' && define.amd ) {
-    // AMD
-    define( [
-      'ev-emitter/ev-emitter'
-    ], function( EvEmitter ) {
-      return factory( window, EvEmitter );
+    each(items, function (items, i) {
+        if (Array.isArray(items)) {
+            each(items, function(item) {
+                setProperty(item, cssVar, i);
+            });
+        } else {
+            setProperty(items, cssVar, i);
+        }
     });
-  } else if ( typeof module == 'object' && module.exports ) {
-    // CommonJS
-    module.exports = factory(
-      window,
-      require('ev-emitter')
-    );
-  } else {
-    // browser global
-    window.imagesLoaded = factory(
-      window,
-      window.EvEmitter
-    );
-  }
 
-})( typeof window !== 'undefined' ? window : this,
-
-// --------------------------  factory -------------------------- //
-
-function factory( window, EvEmitter ) {
-
-'use strict';
-
-var $ = window.jQuery;
-var console = window.console;
-
-// -------------------------- helpers -------------------------- //
-
-// extend objects
-function extend( a, b ) {
-  for ( var prop in b ) {
-    a[ prop ] = b[ prop ];
-  }
-  return a;
+    setProperty(element, prefix + "-total", items.length);
 }
-
-var arraySlice = Array.prototype.slice;
-
-// turn element or nodeList into an array
-function makeArray( obj ) {
-  if ( Array.isArray( obj ) ) {
-    // use object if already an array
-    return obj;
-  }
-
-  var isArrayLike = typeof obj == 'object' && typeof obj.length == 'number';
-  if ( isArrayLike ) {
-    // convert nodeList to array
-    return arraySlice.call( obj );
-  }
-
-  // array of single index
-  return [ obj ];
-}
-
-// -------------------------- imagesLoaded -------------------------- //
 
 /**
- * @param {Array, Element, NodeList, String} elem
- * @param {Object or Function} options - if function, use as callback
- * @param {Function} onAlways - callback function
+ * @type {Record<string, import('./types').ISplittingPlugin>}
  */
-function ImagesLoaded( elem, options, onAlways ) {
-  // coerce ImagesLoaded() without new, to be new ImagesLoaded()
-  if ( !( this instanceof ImagesLoaded ) ) {
-    return new ImagesLoaded( elem, options, onAlways );
-  }
-  // use elem as selector string
-  var queryElem = elem;
-  if ( typeof elem == 'string' ) {
-    queryElem = document.querySelectorAll( elem );
-  }
-  // bail if bad element
-  if ( !queryElem ) {
-    console.error( 'Bad element for imagesLoaded ' + ( queryElem || elem ) );
-    return;
-  }
-
-  this.elements = makeArray( queryElem );
-  this.options = extend( {}, this.options );
-  // shift arguments if no options set
-  if ( typeof options == 'function' ) {
-    onAlways = options;
-  } else {
-    extend( this.options, options );
-  }
-
-  if ( onAlways ) {
-    this.on( 'always', onAlways );
-  }
-
-  this.getImages();
-
-  if ( $ ) {
-    // add jQuery Deferred object
-    this.jqDeferred = new $.Deferred();
-  }
-
-  // HACK check async to allow time to bind listeners
-  setTimeout( this.check.bind( this ) );
-}
-
-ImagesLoaded.prototype = Object.create( EvEmitter.prototype );
-
-ImagesLoaded.prototype.options = {};
-
-ImagesLoaded.prototype.getImages = function() {
-  this.images = [];
-
-  // filter & find items if we have an item selector
-  this.elements.forEach( this.addElementImages, this );
-};
+var plugins = {};
 
 /**
- * @param {Node} element
+ * @param by {string}
+ * @param parent {string}
+ * @param deps {string[]}
+ * @return {string[]}
  */
-ImagesLoaded.prototype.addElementImages = function( elem ) {
-  // filter siblings
-  if ( elem.nodeName == 'IMG' ) {
-    this.addImage( elem );
-  }
-  // get background image on element
-  if ( this.options.background === true ) {
-    this.addElementBackgroundImages( elem );
-  }
+function resolvePlugins(by, parent, deps) {
+    // skip if already visited this dependency
+    var index = deps.indexOf(by);
+    if (index == -1) {
+        // if new to dependency array, add to the beginning
+        deps.unshift(by);
 
-  // find children
-  // no non-element nodes, #143
-  var nodeType = elem.nodeType;
-  if ( !nodeType || !elementNodeTypes[ nodeType ] ) {
-    return;
-  }
-  var childImgs = elem.querySelectorAll('img');
-  // concat childElems to filterFound array
-  for ( var i=0; i < childImgs.length; i++ ) {
-    var img = childImgs[i];
-    this.addImage( img );
-  }
-
-  // get child background images
-  if ( typeof this.options.background == 'string' ) {
-    var children = elem.querySelectorAll( this.options.background );
-    for ( i=0; i < children.length; i++ ) {
-      var child = children[i];
-      this.addElementBackgroundImages( child );
+        // recursively call this function for all dependencies
+        each(plugins[by].depends, function(p) {
+            resolvePlugins(p, by, deps);
+        });
+    } else {
+        // if this dependency was added already move to the left of
+        // the parent dependency so it gets loaded in order
+        var indexOfParent = deps.indexOf(parent);
+        deps.splice(index, 1);
+        deps.splice(indexOfParent, 0, by);
     }
-  }
-};
-
-var elementNodeTypes = {
-  1: true,
-  9: true,
-  11: true
-};
-
-ImagesLoaded.prototype.addElementBackgroundImages = function( elem ) {
-  var style = getComputedStyle( elem );
-  if ( !style ) {
-    // Firefox returns null if in a hidden iframe https://bugzil.la/548397
-    return;
-  }
-  // get url inside url("...")
-  var reURL = /url\((['"])?(.*?)\1\)/gi;
-  var matches = reURL.exec( style.backgroundImage );
-  while ( matches !== null ) {
-    var url = matches && matches[2];
-    if ( url ) {
-      this.addBackground( url, elem );
-    }
-    matches = reURL.exec( style.backgroundImage );
-  }
-};
+    return deps;
+}
 
 /**
- * @param {Image} img
+ * Internal utility for creating plugins... essentially to reduce
+ * the size of the library
+ * @param {string} by 
+ * @param {string} key 
+ * @param {string[]} depends 
+ * @param {Function} split 
+ * @returns {import('./types').ISplittingPlugin}
  */
-ImagesLoaded.prototype.addImage = function( img ) {
-  var loadingImage = new LoadingImage( img );
-  this.images.push( loadingImage );
-};
+function createPlugin(by, depends, key, split) {
+    return {
+        by: by,
+        depends: depends,
+        key: key,
+        split: split
+    }
+}
 
-ImagesLoaded.prototype.addBackground = function( url, elem ) {
-  var background = new Background( url, elem );
-  this.images.push( background );
-};
+/**
+ *
+ * @param by {string}
+ * @returns {import('./types').ISplittingPlugin[]}
+ */
+function resolve(by) {
+    return resolvePlugins(by, 0, []).map(selectFrom(plugins));
+}
 
-ImagesLoaded.prototype.check = function() {
-  var _this = this;
-  this.progressedCount = 0;
-  this.hasAnyBroken = false;
-  // complete if no images
-  if ( !this.images.length ) {
-    this.complete();
-    return;
-  }
+/**
+ * Adds a new plugin to splitting
+ * @param opts {import('./types').ISplittingPlugin}
+ */
+function add(opts) {
+    plugins[opts.by] = opts;
+}
 
-  function onProgress( image, elem, message ) {
-    // HACK - Chrome triggers event before object properties have changed. #83
-    setTimeout( function() {
-      _this.progress( image, elem, message );
+/**
+ * # Splitting.split
+ * Split an element's textContent into individual elements
+ * @param el {Node} Element to split
+ * @param key {string}
+ * @param splitOn {string}
+ * @param includeSpace {boolean}
+ * @returns {HTMLElement[]}
+ */
+function splitText(el, key, splitOn, includePrevious, preserveWhitespace) {
+    // Combine any strange text nodes or empty whitespace.
+    el.normalize();
+
+    // Use fragment to prevent unnecessary DOM thrashing.
+    var elements = [];
+    var F = document.createDocumentFragment();
+
+    if (includePrevious) {
+        elements.push(el.previousSibling);
+    }
+
+    var allElements = [];
+    $(el.childNodes).some(function(next) {
+        if (next.tagName && !next.hasChildNodes()) {
+            // keep elements without child nodes (no text and no children)
+            allElements.push(next);
+            return;
+        }
+        // Recursively run through child nodes
+        if (next.childNodes && next.childNodes.length) {
+            allElements.push(next);
+            elements.push.apply(elements, splitText(next, key, splitOn, includePrevious, preserveWhitespace));
+            return;
+        }
+
+        // Get the text to split, trimming out the whitespace
+        /** @type {string} */
+        var wholeText = next.wholeText || '';
+        var contents = wholeText.trim();
+
+        // If there's no text left after trimming whitespace, continue the loop
+        if (contents.length) {
+            // insert leading space if there was one
+            if (wholeText[0] === ' ') {
+                allElements.push(createText(' '));
+            }
+            // Concatenate the split text children back into the full array
+            each(contents.split(splitOn), function(splitText, i) {
+                if (i && preserveWhitespace) {
+                    allElements.push(createElement(F, "whitespace", " ", preserveWhitespace));
+                }
+                var splitEl = createElement(F, key, splitText);
+                elements.push(splitEl);
+                allElements.push(splitEl);
+            }); 
+            // insert trailing space if there was one
+            if (wholeText[wholeText.length - 1] === ' ') {
+                allElements.push(createText(' '));
+            }
+        }
     });
-  }
 
-  this.images.forEach( function( loadingImage ) {
-    loadingImage.once( 'progress', onProgress );
-    loadingImage.check();
-  });
-};
-
-ImagesLoaded.prototype.progress = function( image, elem, message ) {
-  this.progressedCount++;
-  this.hasAnyBroken = this.hasAnyBroken || !image.isLoaded;
-  // progress event
-  this.emitEvent( 'progress', [ this, image, elem ] );
-  if ( this.jqDeferred && this.jqDeferred.notify ) {
-    this.jqDeferred.notify( this, image );
-  }
-  // check if completed
-  if ( this.progressedCount == this.images.length ) {
-    this.complete();
-  }
-
-  if ( this.options.debug && console ) {
-    console.log( 'progress: ' + message, image, elem );
-  }
-};
-
-ImagesLoaded.prototype.complete = function() {
-  var eventName = this.hasAnyBroken ? 'fail' : 'done';
-  this.isComplete = true;
-  this.emitEvent( eventName, [ this ] );
-  this.emitEvent( 'always', [ this ] );
-  if ( this.jqDeferred ) {
-    var jqMethod = this.hasAnyBroken ? 'reject' : 'resolve';
-    this.jqDeferred[ jqMethod ]( this );
-  }
-};
-
-// --------------------------  -------------------------- //
-
-function LoadingImage( img ) {
-  this.img = img;
-}
-
-LoadingImage.prototype = Object.create( EvEmitter.prototype );
-
-LoadingImage.prototype.check = function() {
-  // If complete is true and browser supports natural sizes,
-  // try to check for image status manually.
-  var isComplete = this.getIsImageComplete();
-  if ( isComplete ) {
-    // report based on naturalWidth
-    this.confirm( this.img.naturalWidth !== 0, 'naturalWidth' );
-    return;
-  }
-
-  // If none of the checks above matched, simulate loading on detached element.
-  this.proxyImage = new Image();
-  this.proxyImage.addEventListener( 'load', this );
-  this.proxyImage.addEventListener( 'error', this );
-  // bind to image as well for Firefox. #191
-  this.img.addEventListener( 'load', this );
-  this.img.addEventListener( 'error', this );
-  this.proxyImage.src = this.img.src;
-};
-
-LoadingImage.prototype.getIsImageComplete = function() {
-  // check for non-zero, non-undefined naturalWidth
-  // fixes Safari+InfiniteScroll+Masonry bug infinite-scroll#671
-  return this.img.complete && this.img.naturalWidth;
-};
-
-LoadingImage.prototype.confirm = function( isLoaded, message ) {
-  this.isLoaded = isLoaded;
-  this.emitEvent( 'progress', [ this, this.img, message ] );
-};
-
-// ----- events ----- //
-
-// trigger specified handler for event type
-LoadingImage.prototype.handleEvent = function( event ) {
-  var method = 'on' + event.type;
-  if ( this[ method ] ) {
-    this[ method ]( event );
-  }
-};
-
-LoadingImage.prototype.onload = function() {
-  this.confirm( true, 'onload' );
-  this.unbindEvents();
-};
-
-LoadingImage.prototype.onerror = function() {
-  this.confirm( false, 'onerror' );
-  this.unbindEvents();
-};
-
-LoadingImage.prototype.unbindEvents = function() {
-  this.proxyImage.removeEventListener( 'load', this );
-  this.proxyImage.removeEventListener( 'error', this );
-  this.img.removeEventListener( 'load', this );
-  this.img.removeEventListener( 'error', this );
-};
-
-// -------------------------- Background -------------------------- //
-
-function Background( url, element ) {
-  this.url = url;
-  this.element = element;
-  this.img = new Image();
-}
-
-// inherit LoadingImage prototype
-Background.prototype = Object.create( LoadingImage.prototype );
-
-Background.prototype.check = function() {
-  this.img.addEventListener( 'load', this );
-  this.img.addEventListener( 'error', this );
-  this.img.src = this.url;
-  // check if image is already complete
-  var isComplete = this.getIsImageComplete();
-  if ( isComplete ) {
-    this.confirm( this.img.naturalWidth !== 0, 'naturalWidth' );
-    this.unbindEvents();
-  }
-};
-
-Background.prototype.unbindEvents = function() {
-  this.img.removeEventListener( 'load', this );
-  this.img.removeEventListener( 'error', this );
-};
-
-Background.prototype.confirm = function( isLoaded, message ) {
-  this.isLoaded = isLoaded;
-  this.emitEvent( 'progress', [ this, this.element, message ] );
-};
-
-// -------------------------- jQuery -------------------------- //
-
-ImagesLoaded.makeJQueryPlugin = function( jQuery ) {
-  jQuery = jQuery || window.jQuery;
-  if ( !jQuery ) {
-    return;
-  }
-  // set local variable
-  $ = jQuery;
-  // $().imagesLoaded()
-  $.fn.imagesLoaded = function( options, callback ) {
-    var instance = new ImagesLoaded( this, options, callback );
-    return instance.jqDeferred.promise( $(this) );
-  };
-};
-// try making plugin
-ImagesLoaded.makeJQueryPlugin();
-
-// --------------------------  -------------------------- //
-
-return ImagesLoaded;
-
-});
-
-},{"ev-emitter":"BQvw"}],"MgTz":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.scrollIt = exports.preloadFonts = exports.preloadImages = exports.calcWinsize = exports.getMousePos = exports.lerp = void 0;
-
-var imagesLoaded = require('imagesloaded'); // Linear interpolation
-
-
-var lerp = function lerp(a, b, n) {
-  return (1 - n) * a + n * b;
-}; // Gets the mouse position
-
-
-exports.lerp = lerp;
-
-var getMousePos = function getMousePos(e) {
-  var posx = 0;
-  var posy = 0;
-  if (!e) e = window.event;
-
-  if (e.pageX || e.pageY) {
-    posx = e.pageX;
-    posy = e.pageY;
-  } else if (e.clientX || e.clientY) {
-    posx = e.clientX + body.scrollLeft + document.documentElement.scrollLeft;
-    posy = e.clientY + body.scrollTop + document.documentElement.scrollTop;
-  }
-
-  return {
-    x: posx,
-    y: posy
-  };
-};
-
-exports.getMousePos = getMousePos;
-
-var calcWinsize = function calcWinsize() {
-  return {
-    width: window.innerWidth,
-    height: window.innerHeight
-  };
-}; // Preload images
-
-
-exports.calcWinsize = calcWinsize;
-
-var preloadImages = function preloadImages() {
-  var selector = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'img';
-  return new Promise(function (resolve) {
-    imagesLoaded(document.querySelectorAll(selector), resolve);
-  });
-}; // Preload images
-
-
-exports.preloadImages = preloadImages;
-
-var preloadFonts = function preloadFonts(id) {
-  return new Promise(function (resolve) {
-    WebFont.load({
-      typekit: {
-        id: id
-      },
-      active: resolve
+    each(allElements, function(el) {
+        appendChild(F, el);
     });
-  });
-}; // https://pawelgrzybek.com/page-scroll-in-vanilla-javascript/
 
+    // Clear out the existing element
+    el.innerHTML = "";
+    appendChild(el, F);
+    return elements;
+}
 
-exports.preloadFonts = preloadFonts;
+/** an empty value */
+var _ = 0;
 
-var scrollIt = function scrollIt(destination) {
-  var duration = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 200;
-  var easing = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'linear';
-  var callback = arguments.length > 3 ? arguments[3] : undefined;
-  var easings = {
-    linear: function linear(t) {
-      return t;
-    },
-    easeInQuad: function easeInQuad(t) {
-      return t * t;
-    },
-    easeOutQuad: function easeOutQuad(t) {
-      return t * (2 - t);
-    },
-    easeInOutQuad: function easeInOutQuad(t) {
-      return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
-    },
-    easeInCubic: function easeInCubic(t) {
-      return t * t * t;
-    },
-    easeOutCubic: function easeOutCubic(t) {
-      return --t * t * t + 1;
-    },
-    easeInOutCubic: function easeInOutCubic(t) {
-      return t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
-    },
-    easeInQuart: function easeInQuart(t) {
-      return t * t * t * t;
-    },
-    easeOutQuart: function easeOutQuart(t) {
-      return 1 - --t * t * t * t;
-    },
-    easeInOutQuart: function easeInOutQuart(t) {
-      return t < 0.5 ? 8 * t * t * t * t : 1 - 8 * --t * t * t * t;
-    },
-    easeInQuint: function easeInQuint(t) {
-      return t * t * t * t * t;
-    },
-    easeOutQuint: function easeOutQuint(t) {
-      return 1 + --t * t * t * t * t;
-    },
-    easeInOutQuint: function easeInOutQuint(t) {
-      return t < 0.5 ? 16 * t * t * t * t * t : 1 + 16 * --t * t * t * t * t;
+function copy(dest, src) {
+    for (var k in src) {
+        dest[k] = src[k];
     }
-  };
-  var start = window.pageYOffset;
-  var startTime = 'now' in window.performance ? performance.now() : new Date().getTime();
-  var documentHeight = Math.max(document.body.scrollHeight, document.body.offsetHeight, document.documentElement.clientHeight, document.documentElement.scrollHeight, document.documentElement.offsetHeight);
-  var windowHeight = window.innerHeight || document.documentElement.clientHeight || document.getElementsByTagName('body')[0].clientHeight;
-  var destinationOffset = typeof destination === 'number' ? destination : destination.offsetTop;
-  var destinationOffsetToScroll = Math.round(documentHeight - destinationOffset < windowHeight ? documentHeight - windowHeight : destinationOffset);
+    return dest;
+}
 
-  if ('requestAnimationFrame' in window === false) {
-    window.scroll(0, destinationOffsetToScroll);
+var WORDS = 'words';
 
-    if (callback) {
-      callback();
+var wordPlugin = createPlugin(
+    /*by: */ WORDS,
+    /*depends: */ _,
+    /*key: */ 'word', 
+    /*split: */ function(el) {
+        return splitText(el, 'word', /\s+/, 0, 1)
+    }
+);
+
+var CHARS = "chars";
+
+var charPlugin = createPlugin(
+    /*by: */ CHARS,
+    /*depends: */ [WORDS],
+    /*key: */ "char", 
+    /*split: */ function(el, options, ctx) {
+        var results = [];
+
+        each(ctx[WORDS], function(word, i) {
+            results.push.apply(results, splitText(word, "char", "", options.whitespace && i));
+        });
+
+        return results;
+    }
+);
+
+/**
+ * # Splitting
+ * 
+ * @param opts {import('./types').ISplittingOptions} 
+ */
+function Splitting (opts) {
+  opts = opts || {};
+  var key = opts.key;
+
+  return $(opts.target || '[data-splitting]').map(function(el) {
+    var ctx = el['🍌'];  
+    if (!opts.force && ctx) {
+      return ctx;
     }
 
-    return;
-  }
+    ctx = el['🍌'] = { el: el };
+    var items = resolve(opts.by || getData(el, 'splitting') || CHARS);
+    var opts2 = copy({}, opts);
+    each(items, function(plugin) {
+      if (plugin.split) {
+        var pluginBy = plugin.by;
+        var key2 = (key ? '-' + key : '') + plugin.key;
+        var results = plugin.split(el, opts2, ctx);
+        key2 && index(el, key2, results);
+        ctx[pluginBy] = results;
+        el.classList.add(pluginBy);
+      } 
+    });
 
-  function scroll() {
-    var now = 'now' in window.performance ? performance.now() : new Date().getTime();
-    var time = Math.min(1, (now - startTime) / duration);
-    var timeFunction = easings[easing](time);
-    window.scroll(0, Math.abs(Math.ceil(timeFunction * (destinationOffsetToScroll - start) + start)));
+    el.classList.add('splitting');
+    return ctx;
+  })
+}
 
-    if (window.pageYOffset === destinationOffsetToScroll) {
-      if (callback) {
-        callback();
-      }
+/**
+ * # Splitting.html
+ * 
+ * @param opts {import('./types').ISplittingOptions}
+ */
+function html(opts) {
+  opts = opts || {};
+  var parent = opts.target =  createElement();
+  parent.innerHTML = opts.content;
+  Splitting(opts);
+  return parent.outerHTML
+}
 
-      return;
+Splitting.html = html;
+Splitting.add = add;
+
+function detectGrid(el, options, side) {
+    var items = $(options.matching || el.children, el);
+    var c = {};
+
+    each(items, function(w) {
+        var val = Math.round(w[side]);
+        (c[val] || (c[val] = [])).push(w);
+    });
+
+    return Object.keys(c).map(Number).sort(byNumber).map(selectFrom(c));
+}
+
+function byNumber(a, b) {
+    return a - b;
+}
+
+var linePlugin = createPlugin(
+    /*by: */ 'lines',
+    /*depends: */ [WORDS],
+    /*key: */ 'line',
+    /*split: */ function(el, options, ctx) {
+      return detectGrid(el, { matching: ctx[WORDS] }, 'offsetTop')
     }
+);
 
-    requestAnimationFrame(scroll);
-  }
+var itemPlugin = createPlugin(
+    /*by: */ 'items',
+    /*depends: */ _,
+    /*key: */ 'item', 
+    /*split: */ function(el, options) {
+        return $(options.matching || el.children, el)
+    }
+);
 
-  scroll();
-};
+var rowPlugin = createPlugin(
+    /*by: */ 'rows',
+    /*depends: */ _,
+    /*key: */ 'row', 
+    /*split: */ function(el, options) {
+        return detectGrid(el, options, "offsetTop");
+    }
+);
 
-exports.scrollIt = scrollIt;
-},{"imagesloaded":"lc7f"}],"TNS6":[function(require,module,exports) {
+var columnPlugin = createPlugin(
+    /*by: */ 'cols',
+    /*depends: */ _,
+    /*key: */ "col", 
+    /*split: */ function(el, options) {
+        return detectGrid(el, options, "offsetLeft");
+    }
+);
+
+var gridPlugin = createPlugin(
+    /*by: */ 'grid',
+    /*depends: */ ['rows', 'cols']
+);
+
+var LAYOUT = "layout";
+
+var layoutPlugin = createPlugin(
+    /*by: */ LAYOUT,
+    /*depends: */ _,
+    /*key: */ _,
+    /*split: */ function(el, opts) {
+        // detect and set options
+        var rows =  opts.rows = +(opts.rows || getData(el, 'rows') || 1);
+        var columns = opts.columns = +(opts.columns || getData(el, 'columns') || 1);
+
+        // Seek out the first <img> if the value is true 
+        opts.image = opts.image || getData(el, 'image') || el.currentSrc || el.src;
+        if (opts.image) {
+            var img = $("img", el)[0];
+            opts.image = img && (img.currentSrc || img.src);
+        }
+
+        // add optional image to background
+        if (opts.image) {
+            setProperty(el, "background-image", "url(" + opts.image + ")");
+        }
+
+        var totalCells = rows * columns;
+        var elements = [];
+
+        var container = createElement(_, "cell-grid");
+        while (totalCells--) {
+            // Create a span
+            var cell = createElement(container, "cell");
+            createElement(cell, "cell-inner");
+            elements.push(cell);
+        }
+
+        // Append elements back into the parent
+        appendChild(el, container);
+
+        return elements;
+    }
+);
+
+var cellRowPlugin = createPlugin(
+    /*by: */ "cellRows",
+    /*depends: */ [LAYOUT],
+    /*key: */ "row",
+    /*split: */ function(el, opts, ctx) {
+        var rowCount = opts.rows;
+        var result = Array2D(rowCount);
+
+        each(ctx[LAYOUT], function(cell, i, src) {
+            result[Math.floor(i / (src.length / rowCount))].push(cell);
+        });
+
+        return result;
+    }
+);
+
+var cellColumnPlugin = createPlugin(
+    /*by: */ "cellColumns",
+    /*depends: */ [LAYOUT],
+    /*key: */ "col",
+    /*split: */ function(el, opts, ctx) {
+        var columnCount = opts.columns;
+        var result = Array2D(columnCount);
+
+        each(ctx[LAYOUT], function(cell, i) {
+            result[i % columnCount].push(cell);
+        });
+
+        return result;
+    }
+);
+
+var cellPlugin = createPlugin(
+    /*by: */ "cells",
+    /*depends: */ ['cellRows', 'cellColumns'],
+    /*key: */ "cell", 
+    /*split: */ function(el, opt, ctx) { 
+        // re-index the layout as the cells
+        return ctx[LAYOUT];
+    }
+);
+
+// install plugins
+// word/char plugins
+add(wordPlugin);
+add(charPlugin);
+add(linePlugin);
+// grid plugins
+add(itemPlugin);
+add(rowPlugin);
+add(columnPlugin);
+add(gridPlugin);
+// cell-layout plugins
+add(layoutPlugin);
+add(cellRowPlugin);
+add(cellColumnPlugin);
+add(cellPlugin);
+
+return Splitting;
+
+})));
+
+},{}],"TNS6":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -791,7 +641,7 @@ function _inheritsLoose(subClass, superClass) {
   subClass.__proto__ = superClass;
 }
 /*!
- * GSAP 3.5.1
+ * GSAP 3.3.3
  * https://greensock.com
  *
  * @license Copyright 2008-2020, GreenSock. All rights reserved.
@@ -848,9 +698,7 @@ var _config = {
     _isFuncOrString = function _isFuncOrString(value) {
   return _isFunction(value) || _isString(value);
 },
-    _isTypedArray = typeof ArrayBuffer === "function" && ArrayBuffer.isView || function () {},
-    // note: IE10 has ArrayBuffer, but NOT ArrayBuffer.isView().
-_isArray = Array.isArray,
+    _isArray = Array.isArray,
     _strictNumExp = /(?:-?\.?\d|\.)+/gi,
     //only numbers (including negatives and decimals) but NOT relative values.
 _numExp = /[-+=.]*\d+[.e\-+]*\d*[e\-\+]*\d*/g,
@@ -858,6 +706,8 @@ _numExp = /[-+=.]*\d+[.e\-+]*\d*[e\-\+]*\d*/g,
 _numWithUnitExp = /[-+=.]*\d+[.e-]*\d*[a-z%]*/g,
     _complexStringNumExp = /[-+=.]*\d+(?:\.|e-|e)*\d*/gi,
     //duplicate so that while we're looping through matches from exec(), it doesn't contaminate the lastIndex of _numExp which we use to search for colors too.
+_parenthesesExp = /\(([^()]+)\)/i,
+    //finds the string between parentheses.
 _relExp = /[+-]=-?[\.\d]+/,
     _delimitedValueExp = /[#\-+.]*\b[a-z\d-=+%.]+/gi,
     _globalTimeline,
@@ -895,7 +745,10 @@ _relExp = /[+-]=-?[\.\d]+/,
   var target = targets[0],
       harnessPlugin,
       i;
-  _isObject(target) || _isFunction(target) || (targets = [targets]);
+
+  if (!_isObject(target) && !_isFunction(target)) {
+    targets = [targets];
+  }
 
   if (!(harnessPlugin = (target._gsap || {}).harness)) {
     i = _harnessPlugins.length;
@@ -916,8 +769,9 @@ _relExp = /[+-]=-?[\.\d]+/,
     _getCache = function _getCache(target) {
   return target._gsap || _harness(toArray(target))[0]._gsap;
 },
-    _getProperty = function _getProperty(target, property, v) {
-  return (v = target[property]) && _isFunction(v) ? target[property]() : _isUndefined(v) && target.getAttribute && target.getAttribute(property) || v;
+    _getProperty = function _getProperty(target, property) {
+  var currentValue = target[property];
+  return _isFunction(currentValue) ? target[property]() : _isUndefined(currentValue) && target.getAttribute(property) || currentValue;
 },
     _forEachName = function _forEachName(names, func) {
   return (names = names.split(",")).forEach(func) || names;
@@ -942,7 +796,10 @@ _round = function _round(value) {
       vars = params[varsIndex],
       irVars;
 
-  isLegacy && (vars.duration = params[1]);
+  if (isLegacy) {
+    vars.duration = params[1];
+  }
+
   vars.parent = parent;
 
   if (type) {
@@ -955,7 +812,12 @@ _round = function _round(value) {
     }
 
     vars.immediateRender = _isNotFalse(irVars.immediateRender);
-    type < 2 ? vars.runBackwards = 1 : vars.startAt = params[varsIndex - 1]; // "from" vars
+
+    if (type < 2) {
+      vars.runBackwards = 1;
+    } else {
+      vars.startAt = params[varsIndex - 1]; // "from" vars
+    }
   }
 
   return vars;
@@ -981,21 +843,25 @@ _round = function _round(value) {
 },
     _numericIfPossible = function _numericIfPossible(value) {
   var n = parseFloat(value);
-  return (n || n === 0) && (value + "").match(_delimitedValueExp).length < 2 ? n : _isString(value) ? value.trim() : value;
+  return (n || n === 0) && (value + "").match(_delimitedValueExp).length < 2 ? n : value;
 },
     _passThrough = function _passThrough(p) {
   return p;
 },
     _setDefaults = function _setDefaults(obj, defaults) {
   for (var p in defaults) {
-    p in obj || (obj[p] = defaults[p]);
+    if (!(p in obj)) {
+      obj[p] = defaults[p];
+    }
   }
 
   return obj;
 },
     _setKeyframeDefaults = function _setKeyframeDefaults(obj, defaults) {
   for (var p in defaults) {
-    p in obj || p === "duration" || p === "ease" || (obj[p] = defaults[p]);
+    if (!(p in obj) && p !== "duration" && p !== "ease") {
+      obj[p] = defaults[p];
+    }
   }
 },
     _merge = function _merge(base, toMerge) {
@@ -1108,18 +974,18 @@ _round = function _round(value) {
   child._next = child._prev = child.parent = null; // don't delete the _dp just so we can revert if necessary. But parent should be null to indicate the item isn't in a linked list.
 },
     _removeFromParent = function _removeFromParent(child, onlyIfParentHasAutoRemove) {
-  child.parent && (!onlyIfParentHasAutoRemove || child.parent.autoRemoveChildren) && child.parent.remove(child);
+  if (child.parent && (!onlyIfParentHasAutoRemove || child.parent.autoRemoveChildren)) {
+    child.parent.remove(child);
+  }
+
   child._act = 0;
 },
-    _uncache = function _uncache(animation, child) {
-  if (animation && (!child || child._end > animation._dur || child._start < 0)) {
-    // performance optimization: if a child animation is passed in we should only uncache if that child EXTENDS the animation (its end time is beyond the end)
-    var a = animation;
+    _uncache = function _uncache(animation) {
+  var a = animation;
 
-    while (a) {
-      a._dirty = 1;
-      a = a.parent;
-    }
+  while (a) {
+    a._dirty = 1;
+    a = a.parent;
   }
 
   return animation;
@@ -1152,20 +1018,6 @@ _animationCycle = function _animationCycle(tTime, cycleDuration) {
     _setEnd = function _setEnd(animation) {
   return animation._end = _round(animation._start + (animation._tDur / Math.abs(animation._ts || animation._rts || _tinyNum) || 0));
 },
-    _alignPlayhead = function _alignPlayhead(animation, totalTime) {
-  // adjusts the animation's _start and _end according to the provided totalTime (only if the parent's smoothChildTiming is true and the animation isn't paused). It doesn't do any rendering or forcing things back into parent timelines, etc. - that's what totalTime() is for.
-  var parent = animation._dp;
-
-  if (parent && parent.smoothChildTiming && animation._ts) {
-    animation._start = _round(animation._dp._time - (animation._ts > 0 ? totalTime / animation._ts : ((animation._dirty ? animation.totalDuration() : animation._tDur) - totalTime) / -animation._ts));
-
-    _setEnd(animation);
-
-    parent._dirty || _uncache(parent, animation); //for performance improvement. If the parent's cache is already dirty, it already took care of marking the ancestors as dirty too, so skip the function call here.
-  }
-
-  return animation;
-},
 
 /*
 _totalTimeToTime = (clampedTotalTime, duration, repeat, repeatDelay, yoyo) => {
@@ -1190,7 +1042,7 @@ _postAddChecks = function _postAddChecks(timeline, child) {
   } //if the timeline has already ended but the inserted tween/timeline extends the duration, we should enable this timeline again so that it renders properly. We should also align the playhead with the parent timeline's when appropriate.
 
 
-  if (_uncache(timeline, child)._dp && timeline._initted && timeline._time >= timeline._dur && timeline._ts) {
+  if (_uncache(timeline)._dp && timeline._initted && timeline._time >= timeline._dur && timeline._ts) {
     //in case any of the ancestors had completed but should now be enabled...
     if (timeline._dur < timeline.duration()) {
       t = timeline;
@@ -1235,7 +1087,7 @@ _postAddChecks = function _postAddChecks(timeline, child) {
 },
     _renderZeroDurationTween = function _renderZeroDurationTween(tween, totalTime, suppressEvents, force) {
   var prevRatio = tween.ratio,
-      ratio = totalTime < 0 || !totalTime && prevRatio && !tween._start && tween._zTime > _tinyNum && !tween._dp._lock || (tween._ts < 0 || tween._dp._ts < 0) && tween.data !== "isFromStart" && tween.data !== "isStart" ? 0 : 1,
+      ratio = totalTime < 0 || !totalTime && prevRatio && !tween._start && tween._zTime > _tinyNum && !tween._dp._lock || tween._ts < 0 || tween._dp._ts < 0 ? 0 : 1,
       // check parent's _lock because when a timeline repeats/yoyos and does its artificial wrapping, we shouldn't force the ratio back to 0. Also, if the tween or its parent is reversed and the totalTime is 0, we should go to a ratio of 0.
   repeatDelay = tween._rDelay,
       tTime = 0,
@@ -1255,12 +1107,12 @@ _postAddChecks = function _postAddChecks(timeline, child) {
     }
   }
 
-  if (ratio !== prevRatio || force || tween._zTime === _tinyNum || !totalTime && tween._zTime) {
-    if (!tween._initted && _attemptInitTween(tween, totalTime, force, suppressEvents)) {
-      // if we render the very beginning (time == 0) of a fromTo(), we must force the render (normal tweens wouldn't need to render at a time of 0 when the prevTime was also 0). This is also mandatory to make sure overwriting kicks in immediately.
-      return;
-    }
+  if (!tween._initted && _attemptInitTween(tween, totalTime, force, suppressEvents)) {
+    // if we render the very beginning (time == 0) of a fromTo(), we must force the render (normal tweens wouldn't need to render at a time of 0 when the prevTime was also 0). This is also mandatory to make sure overwriting kicks in immediately.
+    return;
+  }
 
+  if (ratio !== prevRatio || force || tween._zTime === _tinyNum || !totalTime && tween._zTime) {
     prevIteration = tween._zTime;
     tween._zTime = totalTime || (suppressEvents ? _tinyNum : 0); // when the playhead arrives at EXACTLY time 0 (right on top) of a zero-duration tween, we need to discern if events are suppressed so that when the playhead moves again (next time), it'll trigger the callback. If events are NOT suppressed, obviously the callback would be triggered in this render. Basically, the callback should fire either when the playhead ARRIVES or LEAVES this exact spot, not both. Imagine doing a timeline.seek(0) and there's a callback that sits at 0. Since events are suppressed on that seek() by default, nothing will fire, but when the playhead moves off of that position, the callback should fire. This behavior is what people intuitively expect.
 
@@ -1320,15 +1172,19 @@ _postAddChecks = function _postAddChecks(timeline, child) {
     }
   }
 },
-    _setDuration = function _setDuration(animation, duration, skipUncache, leavePlayhead) {
+    _setDuration = function _setDuration(animation, duration, skipUncache) {
   var repeat = animation._repeat,
-      dur = _round(duration) || 0,
-      totalProgress = animation._tTime / animation._tDur;
-  totalProgress && !leavePlayhead && (animation._time *= dur / animation._dur);
+      dur = _round(duration) || 0;
   animation._dur = dur;
   animation._tDur = !repeat ? dur : repeat < 0 ? 1e10 : _round(dur * (repeat + 1) + animation._rDelay * repeat);
-  totalProgress && !leavePlayhead ? _alignPlayhead(animation, animation._tTime = animation._tDur * totalProgress) : animation.parent && _setEnd(animation);
-  skipUncache || _uncache(animation.parent, animation);
+
+  if (animation._time > dur) {
+    animation._time = dur;
+    animation._tTime = Math.min(animation._tTime, animation._tDur);
+  }
+
+  !skipUncache && _uncache(animation.parent);
+  animation.parent && _setEnd(animation);
   return animation;
 },
     _onUpdateTotalDuration = function _onUpdateTotalDuration(animation) {
@@ -1374,10 +1230,9 @@ _postAddChecks = function _postAddChecks(timeline, child) {
   return value < min ? min : value > max ? max : value;
 },
     getUnit = function getUnit(value) {
-  return (value = (value + "").substr((parseFloat(value) + "").length)) && isNaN(value) ? value : "";
+  return (value + "").substr((parseFloat(value) + "").length);
 },
-    // note: protect against padded numbers as strings, like "100.100". That shouldn't return "00" as the unit. If it's numeric, return no unit.
-clamp = function clamp(min, max, value) {
+    clamp = function clamp(min, max, value) {
   return _conditionalReturn(value, function (v) {
     return _clamp(min, max, v);
   });
@@ -1605,7 +1460,7 @@ distribute = function distribute(v) {
     end = value.indexOf(")", i);
     isArray = value.charAt(i + 7) === "[";
     nums = value.substr(i + 7, end - i - 7).match(isArray ? _delimitedValueExp : _strictNumExp);
-    s += value.substr(prev, i - prev) + random(isArray ? nums : +nums[0], isArray ? 0 : +nums[1], +nums[2] || 1e-5);
+    s += value.substr(prev, i - prev) + random(isArray ? nums : +nums[0], +nums[1], +nums[2] || 1e-5);
     prev = end + 1;
   }
 
@@ -1714,7 +1569,10 @@ distribute = function distribute(v) {
     _interrupt = function _interrupt(animation) {
   _removeFromParent(animation);
 
-  animation.progress() < 1 && _callback(animation, "onInterrupt");
+  if (animation.progress() < 1) {
+    _callback(animation, "onInterrupt");
+  }
+
   return animation;
 },
     _quickTween,
@@ -1769,7 +1627,9 @@ distribute = function distribute(v) {
 
   _addGlobal(name, Plugin);
 
-  config.register && config.register(gsap, Plugin, PropTween);
+  if (config.register) {
+    config.register(gsap, Plugin, PropTween);
+  }
 },
 
 /*
@@ -1844,7 +1704,10 @@ _255 = 255,
         l = +a[2] / 100;
         g = l <= .5 ? l * (s + 1) : l + s - l * s;
         r = l * 2 - g;
-        a.length > 3 && (a[3] *= 1); //cast as number
+
+        if (a.length > 3) {
+          a[3] *= 1; //cast as number
+        }
 
         a[0] = _hue(h + 1 / 3, r, g);
         a[1] = _hue(h, r, g);
@@ -1981,44 +1844,38 @@ _tickerActive,
       _adjustedLag = 33,
       _startTime = _getTime(),
       _lastUpdate = _startTime,
-      _gap = 1000 / 240,
+      _gap = 1 / 240,
       _nextTime = _gap,
       _listeners = [],
       _id,
       _req,
       _raf,
       _self,
-      _delta,
-      _i,
       _tick = function _tick(v) {
     var elapsed = _getTime() - _lastUpdate,
         manual = v === true,
         overlap,
-        dispatch,
-        time,
-        frame;
+        dispatch;
 
-    elapsed > _lagThreshold && (_startTime += elapsed - _adjustedLag);
+    if (elapsed > _lagThreshold) {
+      _startTime += elapsed - _adjustedLag;
+    }
+
     _lastUpdate += elapsed;
-    time = _lastUpdate - _startTime;
-    overlap = time - _nextTime;
+    _self.time = (_lastUpdate - _startTime) / 1000;
+    overlap = _self.time - _nextTime;
 
     if (overlap > 0 || manual) {
-      frame = ++_self.frame;
-      _delta = time - _self.time * 1000;
-      _self.time = time = time / 1000;
-      _nextTime += overlap + (overlap >= _gap ? 4 : _gap - overlap);
+      _self.frame++;
+      _nextTime += overlap + (overlap >= _gap ? 0.004 : _gap - overlap);
       dispatch = 1;
     }
 
     manual || (_id = _req(_tick)); //make sure the request is made before we dispatch the "tick" event so that timing is maintained. Otherwise, if processing the "tick" requires a bunch of time (like 15ms) and we're using a setTimeout() that's based on 16.7ms, it'd technically take 31.7ms between frames otherwise.
 
-    if (dispatch) {
-      for (_i = 0; _i < _listeners.length; _i++) {
-        // use _i and check _listeners.length instead of a variable because a listener could get removed during the loop, and if that happens to an element less than the current index, it'd throw things off in the loop.
-        _listeners[_i](time, _delta, frame, v);
-      }
-    }
+    dispatch && _listeners.forEach(function (l) {
+      return l(_self.time, elapsed, _self.frame, v);
+    });
   };
 
   _self = {
@@ -2026,9 +1883,6 @@ _tickerActive,
     frame: 0,
     tick: function tick() {
       _tick(true);
-    },
-    deltaRatio: function deltaRatio(fps) {
-      return _delta / (1000 / (fps || 60));
     },
     wake: function wake() {
       if (_coreReady) {
@@ -2046,7 +1900,7 @@ _tickerActive,
         _id && _self.sleep();
 
         _req = _raf || function (f) {
-          return setTimeout(f, _nextTime - _self.time * 1000 + 1 | 0);
+          return setTimeout(f, (_nextTime - _self.time) * 1000 + 1 | 0);
         };
 
         _tickerActive = 1;
@@ -2065,8 +1919,8 @@ _tickerActive,
       _adjustedLag = Math.min(adjustedLag, _lagThreshold, 0);
     },
     fps: function fps(_fps) {
-      _gap = 1000 / (_fps || 240);
-      _nextTime = _self.time * 1000 + _gap;
+      _gap = 1 / (_fps || 240);
+      _nextTime = _self.time + _gap;
     },
     add: function add(callback) {
       _listeners.indexOf(callback) < 0 && _listeners.push(callback);
@@ -2075,7 +1929,7 @@ _tickerActive,
     },
     remove: function remove(callback) {
       var i;
-      ~(i = _listeners.indexOf(callback)) && _listeners.splice(i, 1) && _i >= i && _i--;
+      ~(i = _listeners.indexOf(callback)) && _listeners.splice(i, 1);
     },
     _listeners: _listeners
   };
@@ -2115,17 +1969,11 @@ _easeMap = {},
 
   return obj;
 },
-    _valueInParentheses = function _valueInParentheses(value) {
-  var open = value.indexOf("(") + 1,
-      close = value.indexOf(")"),
-      nested = value.indexOf("(", open);
-  return value.substring(open, ~nested && nested < close ? value.indexOf(")", close + 1) : close);
-},
     _configEaseFromString = function _configEaseFromString(name) {
   //name can be a string like "elastic.out(1,0.5)", and pass in _easeMap as obj and it'll parse it out and call the actual function like _easeMap.Elastic.easeOut.config(1,0.5). It will also parse custom ease strings as long as CustomEase is loaded and registered (internally as _easeMap._CE).
   var split = (name + "").split("("),
       ease = _easeMap[split[0]];
-  return ease && split.length > 1 && ease.config ? ease.config.apply(null, ~name.indexOf("{") ? [_parseObjectInString(split[1])] : _valueInParentheses(name).split(",").map(_numericIfPossible)) : _easeMap._CE && _customEaseExp.test(name) ? _easeMap._CE("", name) : ease;
+  return ease && split.length > 1 && ease.config ? ease.config.apply(null, ~name.indexOf("{") ? [_parseObjectInString(split[1])] : _parenthesesExp.exec(name)[1].split(",").map(_numericIfPossible)) : _easeMap._CE && _customEaseExp.test(name) ? _easeMap._CE("", name) : ease;
 },
     _invertEase = function _invertEase(ease) {
   return function (p) {
@@ -2381,7 +2229,7 @@ var Animation = /*#__PURE__*/function () {
 
     this._ts = 1;
 
-    _setDuration(this, +vars.duration, 1, 1);
+    _setDuration(this, +vars.duration, 1);
 
     this.data = vars.data;
     _tickerActive || _ticker.wake();
@@ -2422,11 +2270,18 @@ var Animation = /*#__PURE__*/function () {
       return this._tTime;
     }
 
-    var parent = this._dp;
+    var parent = this.parent || this._dp;
 
     if (parent && parent.smoothChildTiming && this._ts) {
-      _alignPlayhead(this, _totalTime); //in case any of the ancestor timelines had completed but should now be enabled, we should reset their totalTime() which will also ensure that they're lined up properly and enabled. Skip for animations that are on the root (wasteful). Example: a TimelineLite.exportRoot() is performed when there's a paused tween on the root, the export will not complete until that tween is unpaused, but imagine a child gets restarted later, after all [unpaused] tweens have completed. The start of that child would get pushed out, but one of the ancestors may have completed.
+      // if (!parent._dp && parent._time === parent._dur) { // if a root timeline completes...and then a while later one of its children resumes, we must shoot the playhead forward to where it should be raw-wise, otherwise the child will jump to the end. Down side: this assumes it's using the _ticker.time as a reference.
+      // 	parent._time = _ticker.time - parent._start;
+      // }
+      this._start = _round(parent._time - (this._ts > 0 ? _totalTime / this._ts : ((this._dirty ? this.totalDuration() : this._tDur) - _totalTime) / -this._ts));
 
+      _setEnd(this);
+
+      parent._dirty || _uncache(parent); //for performance improvement. If the parent's cache is already dirty, it already took care of marking the ancestors as dirty too, so skip the function call here.
+      //in case any of the ancestor timelines had completed but should now be enabled, we should reset their totalTime() which will also ensure that they're lined up properly and enabled. Skip for animations that are on the root (wasteful). Example: a TimelineLite.exportRoot() is performed when there's a paused tween on the root, the export will not complete until that tween is unpaused, but imagine a child gets restarted later, after all [unpaused] tweens have completed. The start of that child would get pushed out, but one of the ancestors may have completed.
 
       while (parent.parent) {
         if (parent.parent._time !== parent._start + (parent._ts >= 0 ? parent._tTime / parent._ts : (parent.totalDuration() - parent._tTime) / -parent._ts)) {
@@ -2442,8 +2297,7 @@ var Animation = /*#__PURE__*/function () {
       }
     }
 
-    if (this._tTime !== _totalTime || !this._dur && !suppressEvents || this._initted && Math.abs(this._zTime) === _tinyNum || !_totalTime && !this._initted && (this.add || this._ptLookup)) {
-      // check for _ptLookup on a Tween instance to ensure it has actually finished being instantiated, otherwise if this.reverse() gets called in the Animation constructor, it could trigger a render() here even though the _targets weren't populated, thus when _init() is called there won't be any PropTweens (it'll act like the tween is non-functional)
+    if (this._tTime !== _totalTime || !this._dur && !suppressEvents || this._initted && Math.abs(this._zTime) === _tinyNum || !_totalTime && !this._initted) {
       this._ts || (this._pTime = _totalTime); // otherwise, if an animation is paused, then the playhead is moved back to zero, then resumed, it'd revert back to the original time at the pause
 
       _lazySafeRender(this, _totalTime, suppressEvents);
@@ -2495,7 +2349,7 @@ var Animation = /*#__PURE__*/function () {
     this._rts = +value || 0;
     this._ts = this._ps || value === -_tinyNum ? 0 : this._rts; // _ts is the functional timeScale which would be 0 if the animation is paused.
 
-    return _recacheAncestors(this.totalTime(_clamp(-this._delay, this._tDur, tTime), true));
+    return _recacheAncestors(this.totalTime(_clamp(0, this._tDur, tTime), true));
   };
 
   _proto.paused = function paused(value) {
@@ -2541,19 +2395,16 @@ var Animation = /*#__PURE__*/function () {
     var parent = this.parent || this._dp; // _dp = detatched parent
 
     return !parent ? this._tTime : wrapRepeats && (!this._ts || this._repeat && this._time && this.totalProgress() < 1) ? this._tTime % (this._dur + this._rDelay) : !this._ts ? this._tTime : _parentToChildTotalTime(parent.rawTime(wrapRepeats), this);
-  };
-
-  _proto.globalTime = function globalTime(rawTime) {
-    var animation = this,
-        time = arguments.length ? rawTime : animation.rawTime();
-
-    while (animation) {
-      time = animation._start + time / (animation._ts || 1);
-      animation = animation._dp;
-    }
-
-    return time;
-  };
+  } // globalTime(rawTime) {
+  // 	let animation = this,
+  // 		time = arguments.length ? rawTime : animation.rawTime();
+  // 	while (animation) {
+  // 		time = animation._start + time / (animation._ts || 1);
+  // 		animation = animation.parent;
+  // 	}
+  // 	return time;
+  // }
+  ;
 
   _proto.repeat = function repeat(value) {
     if (arguments.length) {
@@ -2591,17 +2442,26 @@ var Animation = /*#__PURE__*/function () {
   };
 
   _proto.play = function play(from, suppressEvents) {
-    from != null && this.seek(from, suppressEvents);
+    if (from != null) {
+      this.seek(from, suppressEvents);
+    }
+
     return this.reversed(false).paused(false);
   };
 
   _proto.reverse = function reverse(from, suppressEvents) {
-    from != null && this.seek(from || this.totalDuration(), suppressEvents);
+    if (from != null) {
+      this.seek(from || this.totalDuration(), suppressEvents);
+    }
+
     return this.reversed(true).paused(false);
   };
 
   _proto.pause = function pause(atTime, suppressEvents) {
-    atTime != null && this.seek(atTime, suppressEvents);
+    if (atTime != null) {
+      this.seek(atTime, suppressEvents);
+    }
+
     return this.paused(true);
   };
 
@@ -2611,7 +2471,9 @@ var Animation = /*#__PURE__*/function () {
 
   _proto.reversed = function reversed(value) {
     if (arguments.length) {
-      !!value !== this.reversed() && this.timeScale(-this._rts || (value ? -_tinyNum : 0)); // in case timeScale is zero, reversing would have no effect so we use _tinyNum.
+      if (!!value !== this.reversed()) {
+        this.timeScale(-this._rts || (value ? -_tinyNum : 0)); // in case timeScale is zero, reversing would have no effect so we use _tinyNum.
+      }
 
       return this;
     }
@@ -2625,11 +2487,11 @@ var Animation = /*#__PURE__*/function () {
     return this;
   };
 
-  _proto.isActive = function isActive() {
+  _proto.isActive = function isActive(hasStarted) {
     var parent = this.parent || this._dp,
         start = this._start,
         rawTime;
-    return !!(!parent || this._ts && this._initted && parent.isActive() && (rawTime = parent.rawTime(true)) >= start && rawTime < this.endTime(true) - _tinyNum);
+    return !!(!parent || this._ts && (this._initted || !hasStarted) && parent.isActive(hasStarted) && (rawTime = parent.rawTime(true)) >= start && rawTime < this.endTime(true) - _tinyNum);
   };
 
   _proto.eventCallback = function eventCallback(type, callback, params) {
@@ -2640,8 +2502,14 @@ var Animation = /*#__PURE__*/function () {
         delete vars[type];
       } else {
         vars[type] = callback;
-        params && (vars[type + "Params"] = params);
-        type === "onUpdate" && (this._onUpdate = callback);
+
+        if (params) {
+          vars[type + "Params"] = params;
+        }
+
+        if (type === "onUpdate") {
+          this._onUpdate = callback;
+        }
       }
 
       return this;
@@ -2823,19 +2691,15 @@ var Timeline = /*#__PURE__*/function (_Animation) {
         cycleDuration = dur + this._rDelay;
         time = _round(tTime % cycleDuration); //round to avoid floating point errors. (4 % 0.8 should be 0 but some browsers report it as 0.79999999!)
 
-        if (tTime === tDur) {
-          // the tDur === tTime is for edge cases where there's a lengthy decimal on the duration and it may reach the very end but the time is rendered as not-quite-there (remember, tDur is rounded to 4 decimals whereas dur isn't)
-          iteration = this._repeat;
+        if (time > dur || tDur === tTime) {
           time = dur;
-        } else {
-          iteration = ~~(tTime / cycleDuration);
+        }
 
-          if (iteration && iteration === tTime / cycleDuration) {
-            time = dur;
-            iteration--;
-          }
+        iteration = ~~(tTime / cycleDuration);
 
-          time > dur && (time = dur);
+        if (iteration && iteration === tTime / cycleDuration) {
+          time = dur;
+          iteration--;
         }
 
         prevIteration = _animationCycle(this._tTime, cycleDuration);
@@ -2858,24 +2722,28 @@ var Timeline = /*#__PURE__*/function (_Animation) {
         if (iteration !== prevIteration && !this._lock) {
           var rewinding = yoyo && prevIteration & 1,
               doesWrap = rewinding === (yoyo && iteration & 1);
-          iteration < prevIteration && (rewinding = !rewinding);
+
+          if (iteration < prevIteration) {
+            rewinding = !rewinding;
+          }
+
           prevTime = rewinding ? 0 : dur;
           this._lock = 1;
           this.render(prevTime || (isYoyo ? 0 : _round(iteration * cycleDuration)), suppressEvents, !dur)._lock = 0;
-          !suppressEvents && this.parent && _callback(this, "onRepeat");
+
+          if (!suppressEvents && this.parent) {
+            _callback(this, "onRepeat");
+          }
+
           this.vars.repeatRefresh && !isYoyo && (this.invalidate()._lock = 1);
 
           if (prevTime !== this._time || prevPaused !== !this._ts) {
             return this;
           }
 
-          dur = this._dur; // in case the duration changed in the onRepeat
-
-          tDur = this._tDur;
-
           if (doesWrap) {
             this._lock = 2;
-            prevTime = rewinding ? dur : -0.0001;
+            prevTime = rewinding ? dur + 0.0001 : -0.0001;
             this.render(prevTime, true);
             this.vars.repeatRefresh && !isYoyo && this.invalidate();
           }
@@ -2909,7 +2777,9 @@ var Timeline = /*#__PURE__*/function (_Animation) {
         this._zTime = totalTime;
       }
 
-      !prevTime && time && !suppressEvents && _callback(this, "onStart");
+      if (!prevTime && time && !suppressEvents) {
+        _callback(this, "onStart");
+      }
 
       if (time >= prevTime && totalTime >= 0) {
         child = this._first;
@@ -3005,7 +2875,7 @@ var Timeline = /*#__PURE__*/function (_Animation) {
         child.forEach(function (obj) {
           return _this2.add(obj, position);
         });
-        return this;
+        return _uncache(this);
       }
 
       if (_isString(child)) {
@@ -3094,7 +2964,7 @@ var Timeline = /*#__PURE__*/function (_Animation) {
 
     this._forcing = 1;
 
-    if (!this._dp && this._ts) {
+    if (!this.parent && !this._dp && this._ts) {
       //special case for the global timeline (or any other that has no parent or detached parent).
       this._start = _round(_ticker.time - (this._ts > 0 ? _totalTime2 / this._ts : (this.totalDuration() - _totalTime2) / -this._ts));
     }
@@ -3150,14 +3020,11 @@ var Timeline = /*#__PURE__*/function (_Animation) {
     var a = [],
         parsedTargets = toArray(targets),
         child = this._first,
-        isGlobalTime = _isNumber(onlyActive),
-        // a number is interpreted as a global time. If the animation spans
-    children;
+        children;
 
     while (child) {
       if (child instanceof Tween) {
-        if (_arrayContainsAny(child._targets, parsedTargets) && (isGlobalTime ? (!_overwritingTween || child._initted && child._ts) && child.globalTime(0) <= onlyActive && child.globalTime(child.totalDuration()) > onlyActive : !onlyActive || child.isActive())) {
-          // note: if this is for overwriting, it should only be for tweens that aren't paused and are initted.
+        if (_arrayContainsAny(child._targets, parsedTargets) && (!onlyActive || child.isActive(onlyActive === "started"))) {
           a.push(child);
         }
       } else if ((children = child.getTweensOf(parsedTargets, onlyActive)).length) {
@@ -3183,12 +3050,11 @@ var Timeline = /*#__PURE__*/function (_Animation) {
       ease: "none",
       lazy: false,
       time: endTime,
-      overwrite: "auto",
       duration: vars.duration || Math.abs((endTime - (startAt && "time" in startAt ? startAt.time : tl._time)) / tl.timeScale()) || _tinyNum,
       onStart: function onStart() {
         tl.pause();
         var duration = vars.duration || Math.abs((endTime - tl._time) / tl.timeScale());
-        tween._dur !== duration && _setDuration(tween, duration, 0, 1).render(tween._time, true, true);
+        tween._dur !== duration && _setDuration(tween, duration).render(tween._time, true, true);
         _onStart && _onStart.apply(tween, onStartParams || []); //in case the user had an onStart in the vars - we don't want to overwrite it.
       }
     }));
@@ -3240,7 +3106,6 @@ var Timeline = /*#__PURE__*/function (_Animation) {
     while (child) {
       if (child._start >= ignoreBeforeTime) {
         child._start += amount;
-        child._end += amount;
       }
 
       child = child._next;
@@ -3284,7 +3149,11 @@ var Timeline = /*#__PURE__*/function (_Animation) {
     }
 
     this._time = this._tTime = this._pTime = 0;
-    includeLabels && (this.labels = {});
+
+    if (includeLabels) {
+      this.labels = {};
+    }
+
     return _uncache(this);
   };
 
@@ -3294,6 +3163,7 @@ var Timeline = /*#__PURE__*/function (_Animation) {
         child = self._last,
         prevStart = _bigNum,
         prev,
+        end,
         start,
         parent;
 
@@ -3334,11 +3204,16 @@ var Timeline = /*#__PURE__*/function (_Animation) {
           prevStart = 0;
         }
 
-        child._end > max && child._ts && (max = child._end);
+        end = _setEnd(child);
+
+        if (end > max && child._ts) {
+          max = end;
+        }
+
         child = prev;
       }
 
-      _setDuration(self, self === _globalTimeline && self._time > max ? self._time : max, 1, 1);
+      _setDuration(self, self === _globalTimeline && self._time > max ? self._time : max, 1);
 
       self._dirty = 0;
     }
@@ -3465,7 +3340,7 @@ var _addComplexStringPropTween = function _addComplexStringPropTween(target, pro
   }
 
   if (parsedStart !== end) {
-    if (!isNaN(parsedStart * end)) {
+    if (!isNaN(parsedStart + end)) {
       pt = new PropTween(this._pt, target, prop, +parsedStart || 0, end - (parsedStart || 0), typeof currentValue === "boolean" ? _renderBoolean : _renderPlain, 0, setter);
       funcParam && (pt.fp = funcParam);
       modifier && pt.modifier(modifier, this, target);
@@ -3478,9 +3353,11 @@ var _addComplexStringPropTween = function _addComplexStringPropTween(target, pro
 },
     //creates a copy of the vars object and processes any function-based values (putting the resulting values directly into the copy) as well as strings with "random()" in them. It does NOT process relative values.
 _processVars = function _processVars(vars, index, target, targets, tween) {
-  _isFunction(vars) && (vars = _parseFuncOrString(vars, tween, index, target, targets));
+  if (_isFunction(vars)) {
+    vars = _parseFuncOrString(vars, tween, index, target, targets);
+  }
 
-  if (!_isObject(vars) || vars.style && vars.nodeType || _isArray(vars) || _isTypedArray(vars)) {
+  if (!_isObject(vars) || vars.style && vars.nodeType || _isArray(vars)) {
     return _isString(vars) ? _parseFuncOrString(vars, tween, index, target, targets) : vars;
   }
 
@@ -3545,8 +3422,7 @@ _initTween = function _initTween(tween, time) {
       plugin,
       ptLookup,
       index,
-      harnessVars,
-      overwritten;
+      harnessVars;
   tl && (!keyframes || !ease) && (ease = "none");
   tween._ease = _parseEase(ease, _defaults.ease);
   tween._yEase = yoyoEase ? _invertEase(_parseEase(yoyoEase === true ? ease : yoyoEase, _defaults.ease)) : 0;
@@ -3584,9 +3460,8 @@ _initTween = function _initTween(tween, time) {
 
       if (immediateRender) {
         if (time > 0) {
-          autoRevert || (tween._startAt = 0); //tweens that render immediately (like most from() and fromTo() tweens) shouldn't revert when their parent timeline's playhead goes backward past the startTime because the initial render could have happened anytime and it shouldn't be directly correlated to this tween's startTime. Imagine setting up a complex animation where the beginning states of various objects are rendered immediately but the tween doesn't happen for quite some time - if we revert to the starting values as soon as the playhead goes backward past the tween's startTime, it will throw things off visually. Reversion should only happen in Timeline instances where immediateRender was false or when autoRevert is explicitly set to true.
-        } else if (dur && !(time < 0 && prevStartAt)) {
-          time && (tween._zTime = time);
+          !autoRevert && (tween._startAt = 0); //tweens that render immediately (like most from() and fromTo() tweens) shouldn't revert when their parent timeline's playhead goes backward past the startTime because the initial render could have happened anytime and it shouldn't be directly correlated to this tween's startTime. Imagine setting up a complex animation where the beginning states of various objects are rendered immediately but the tween doesn't happen for quite some time - if we revert to the starting values as soon as the playhead goes backward past the tween's startTime, it will throw things off visually. Reversion should only happen in Timeline instances where immediateRender was false or when autoRevert is explicitly set to true.
+        } else if (dur) {
           return; //we skip initialization here so that overwriting doesn't occur until the tween actually begins. Otherwise, if you create several immediateRender:true tweens of the same target/properties to drop into a Timeline, the last one created would overwrite the first ones because they didn't get placed into the timeline yet before the first render occurs and kicks in overwriting.
         }
       }
@@ -3597,7 +3472,7 @@ _initTween = function _initTween(tween, time) {
       } else {
         time && (immediateRender = false); //in rare cases (like if a from() tween runs and then is invalidate()-ed), immediateRender could be true but the initial forced-render gets skipped, so there's no need to force the render in this context when the _time is greater than 0
 
-        p = _setDefaults({
+        p = _merge(cleanVars, {
           overwrite: false,
           data: "isFromStart",
           //we tag the tween with as "isFromStart" so that if [inside a plugin] we need to only do something at the very END of a tween, we have a way of identifying this tween as merely the one that's setting the beginning values for a "from()" tween. For example, clearProps in CSSPlugin should only get applied at the very END of a tween and without this tag, from(...{height:100, clearProps:"height", delay:1}) would wipe the height at the beginning of the tween and after 1 second, it'd kick back in.
@@ -3607,7 +3482,7 @@ _initTween = function _initTween(tween, time) {
           stagger: 0,
           parent: parent //ensures that nested tweens that had a stagger are handled properly, like gsap.from(".class", {y:gsap.utils.wrap([-100,100])})
 
-        }, cleanVars);
+        });
         harnessVars && (p[harness.prop] = harnessVars); // in case someone does something like .from(..., {css:{}})
 
         _removeFromParent(tween._startAt = Tween.set(targets, p));
@@ -3628,7 +3503,7 @@ _initTween = function _initTween(tween, time) {
       target = targets[i];
       gsData = target._gsap || _harness(targets)[i]._gsap;
       tween._ptLookup[i] = ptLookup = {};
-      _lazyLookup[gsData.id] && _lazyTweens.length && _lazyRender(); //if other tweens of the same target have recently initted but haven't rendered yet, we've got to force the render so that the starting values are correct (imagine populating a timeline with a bunch of sequential tweens and then jumping to the end)
+      _lazyLookup[gsData.id] && _lazyRender(); //if other tweens of the same target have recently initted but haven't rendered yet, we've got to force the render so that the starting values are correct (imagine populating a timeline with a bunch of sequential tweens and then jumping to the end)
 
       index = fullTargets === targets ? i : fullTargets.indexOf(target);
 
@@ -3657,10 +3532,9 @@ _initTween = function _initTween(tween, time) {
       if (autoOverwrite && tween._pt) {
         _overwritingTween = tween;
 
-        _globalTimeline.killTweensOf(target, ptLookup, tween.globalTime(0)); //Also make sure the overwriting doesn't overwrite THIS tween!!!
+        _globalTimeline.killTweensOf(target, ptLookup, "started"); //Also make sure the overwriting doesn't overwrite THIS tween!!!
 
 
-        overwritten = !tween.parent;
         _overwritingTween = 0;
       }
 
@@ -3674,7 +3548,7 @@ _initTween = function _initTween(tween, time) {
   tween._from = !tl && !!vars.runBackwards; //nested timelines should never run backwards - the backwards-ness is in the child tweens.
 
   tween._onUpdate = onUpdate;
-  tween._initted = (!tween._op || tween._pt) && !overwritten; // if overwrittenProps resulted in the entire tween being killed, do NOT flag it as initted or else it may render for one tick.
+  tween._initted = !!tween.parent; // if overwrittenProps resulted in the entire tween being killed, do NOT flag it as initted or else it may render for one tick.
 },
     _addAliasesToVars = function _addAliasesToVars(targets, vars) {
   var harness = targets[0] ? _getCache(targets[0]).harness : 0,
@@ -3741,7 +3615,7 @@ var Tween = /*#__PURE__*/function (_Animation2) {
         scrollTrigger = _this3$vars.scrollTrigger,
         yoyoEase = _this3$vars.yoyoEase,
         parent = _this3.parent,
-        parsedTargets = (_isArray(targets) || _isTypedArray(targets) ? _isNumber(targets[0]) : "length" in vars) ? [targets] : toArray(targets),
+        parsedTargets = (_isArray(targets) ? _isNumber(targets[0]) : "length" in vars) ? [targets] : toArray(targets),
         tl,
         i,
         copy,
@@ -3871,19 +3745,16 @@ var Tween = /*#__PURE__*/function (_Animation2) {
         cycleDuration = dur + this._rDelay;
         time = _round(tTime % cycleDuration); //round to avoid floating point errors. (4 % 0.8 should be 0 but some browsers report it as 0.79999999!)
 
-        if (tTime === tDur) {
+        if (time > dur || tDur === tTime) {
           // the tDur === tTime is for edge cases where there's a lengthy decimal on the duration and it may reach the very end but the time is rendered as not-quite-there (remember, tDur is rounded to 4 decimals whereas dur isn't)
-          iteration = this._repeat;
           time = dur;
-        } else {
-          iteration = ~~(tTime / cycleDuration);
+        }
 
-          if (iteration && iteration === tTime / cycleDuration) {
-            time = dur;
-            iteration--;
-          }
+        iteration = ~~(tTime / cycleDuration);
 
-          time > dur && (time = dur);
+        if (iteration && iteration === tTime / cycleDuration) {
+          time = dur;
+          iteration--;
         }
 
         isYoyo = this._yoyo && iteration & 1;
@@ -3912,7 +3783,7 @@ var Tween = /*#__PURE__*/function (_Animation2) {
       }
 
       if (!this._initted) {
-        if (_attemptInitTween(this, totalTime < 0 ? totalTime : time, force, suppressEvents)) {
+        if (_attemptInitTween(this, time, force, suppressEvents)) {
           this._tTime = 0; // in constructor if immediateRender is true, we set _tTime to -_tinyNum to have the playhead cross the starting point but we can't leave _tTime as a negative number.
 
           return this;
@@ -3950,7 +3821,10 @@ var Tween = /*#__PURE__*/function (_Animation2) {
       timeline && timeline.render(totalTime < 0 ? totalTime : !time && isYoyo ? -_tinyNum : timeline._dur * ratio, suppressEvents, force) || this._startAt && (this._zTime = totalTime);
 
       if (this._onUpdate && !suppressEvents) {
-        totalTime < 0 && this._startAt && this._startAt.render(totalTime, true, force); //note: for performance reasons, we tuck this conditional logic inside less traveled areas (most tweens don't have an onUpdate). We'd just have it at the end before the onComplete, but the values should be updated before any onUpdate is called, so we ALSO put it here and then if it's not called, we do so later near the onComplete.
+        if (totalTime < 0 && this._startAt) {
+          this._startAt.render(totalTime, true, force); //note: for performance reasons, we tuck this conditional logic inside less traveled areas (most tweens don't have an onUpdate). We'd just have it at the end before the onComplete, but the values should be updated before any onUpdate is called, so we ALSO put it here and then if it's not called, we do so later near the onComplete.
+
+        }
 
         _callback(this, "onUpdate");
       }
@@ -4001,7 +3875,7 @@ var Tween = /*#__PURE__*/function (_Animation2) {
       var tDur = this.timeline.totalDuration();
       this.timeline.killTweensOf(targets, vars, _overwritingTween && _overwritingTween.vars.overwrite !== true)._first || _interrupt(this); // if nothing is left tweenng, interrupt.
 
-      this.parent && tDur !== this.timeline.totalDuration() && _setDuration(this, this._dur * this.timeline._tDur / tDur, 0, 1); // if a nested tween is killed that changes the duration, it should affect this tween's duration. We must use the ratio, though, because sometimes the internal timeline is stretched like for keyframes where they don't all add up to whatever the parent tween's duration was set to.
+      this.parent && tDur !== this.timeline.totalDuration() && _setDuration(this, this._dur * this.timeline._tDur / tDur); // if a nested tween is killed that changes the duration, it should affect this tween's duration. We must use the ratio, though, because sometimes the internal timeline is stretched like for keyframes where they don't all add up to whatever the parent tween's duration was set to.
 
       return this;
     }
@@ -4019,7 +3893,6 @@ var Tween = /*#__PURE__*/function (_Animation2) {
         i;
 
     if ((!vars || vars === "all") && _arraysMatch(parsedTargets, killingTargets)) {
-      vars === "all" && (this._pt = 0);
       return _interrupt(this);
     }
 
@@ -4208,7 +4081,11 @@ var _setterPlain = function _setterPlain(target, property, value) {
 
   while (pt) {
     next = pt._next;
-    pt.p === property && pt.modifier(modifier, tween, target);
+
+    if (pt.p === property) {
+      pt.modifier(modifier, tween, target);
+    }
+
     pt = next;
   }
 },
@@ -4344,12 +4221,18 @@ var _gsap = {
     return _globalTimeline.getTweensOf(targets, onlyActive);
   },
   getProperty: function getProperty(target, property, unit, uncache) {
-    _isString(target) && (target = toArray(target)[0]); //in case selector text or an array is passed in
+    if (_isString(target)) {
+      //in case selector text or an array is passed in
+      target = toArray(target)[0];
+    }
 
     var getter = _getCache(target || {}).get,
         format = unit ? _passThrough : _numericIfPossible;
 
-    unit === "native" && (unit = "");
+    if (unit === "native") {
+      unit = "";
+    }
+
     return !target ? target : !property ? function (property, unit, uncache) {
       return format((_plugins[property] && _plugins[property].get || getter)(target, property, unit, uncache));
     } : format((_plugins[property] && _plugins[property].get || getter)(target, property, unit, uncache));
@@ -4393,7 +4276,10 @@ var _gsap = {
     return _globalTimeline.getTweensOf(targets, true).length > 0;
   },
   defaults: function defaults(value) {
-    value && value.ease && (value.ease = _parseEase(value.ease, _defaults.ease));
+    if (value && value.ease) {
+      value.ease = _parseEase(value.ease, _defaults.ease);
+    }
+
     return _mergeDeep(_defaults, value || {});
   },
   config: function config(value) {
@@ -4579,7 +4465,7 @@ var gsap = _gsap.registerPlugin({
 
     for (p in vars) {
       pt = this.add(target, "setAttribute", (target.getAttribute(p) || 0) + "", vars[p], index, targets, 0, 0, p);
-      pt && (pt.op = p);
+      pt && (pt.op = p); //this.add(target, "setAttribute", (target.getAttribute((p in target.dataset ? (p = "data-" + p) : p)) || 0) + "", vars[p], index, targets, 0, 0, p);
 
       this._props.push(p);
     }
@@ -4597,7 +4483,7 @@ var gsap = _gsap.registerPlugin({
 
 
 exports.default = exports.gsap = gsap;
-Tween.version = Timeline.version = gsap.version = "3.5.1";
+Tween.version = Timeline.version = gsap.version = "3.3.3";
 _coreReady = 1;
 
 if (_windowExists()) {
@@ -4651,7 +4537,7 @@ exports.checkPrefix = exports._createElement = exports._getBBox = exports.defaul
 var _gsapCore = require("./gsap-core.js");
 
 /*!
- * CSSPlugin 3.5.1
+ * CSSPlugin 3.3.3
  * https://greensock.com
  *
  * Copyright 2008-2020, GreenSock. All rights reserved.
@@ -4764,7 +4650,7 @@ _renderRoundedCSSProp = function _renderRoundedCSSProp(ratio, data) {
     };
     _tempDivStyler = _createElement("div");
     _transformProp = _checkPropPrefix(_transformProp);
-    _transformOriginProp = _transformProp + "Origin";
+    _transformOriginProp = _checkPropPrefix(_transformOriginProp);
     _tempDiv.style.cssText = "border-width:0;line-height:0;position:absolute;padding:0"; //make sure to override certain properties that may contaminate measurements, in case the user has overreaching style sheets.
 
     _supports3D = !!_checkPropPrefix("perspective");
@@ -4843,7 +4729,7 @@ _removeProperty = function _removeProperty(target, property) {
   if (property) {
     var style = target.style;
 
-    if (property in _transformProps && property !== _transformOriginProp) {
+    if (property in _transformProps) {
       property = _transformProp;
     }
 
@@ -4939,7 +4825,10 @@ _convertToUnit = function _convertToUnit(target, property, value, unit) {
 },
     _get = function _get(target, property, unit, uncache) {
   var value;
-  _pluginInitted || _initCore();
+
+  if (!_pluginInitted) {
+    _initCore();
+  }
 
   if (property in _propertyAliases && property !== "transform") {
     property = _propertyAliases[property];
@@ -4972,8 +4861,6 @@ _convertToUnit = function _convertToUnit(target, property, value, unit) {
     if (s && s !== start) {
       prop = p;
       start = s;
-    } else if (prop === "borderColor") {
-      start = _getComputedProperty(target, "borderTopColor"); // Firefox bug: always reports "borderColor" as "", so we must fall back to borderTopColor. See https://greensock.com/forums/topic/24583-how-to-return-colors-that-i-had-after-reverse/
     }
   }
 
@@ -5849,7 +5736,10 @@ var CSSPlugin = {
         cache,
         smooth,
         hasPriority;
-    _pluginInitted || _initCore();
+
+    if (!_pluginInitted) {
+      _initCore();
+    }
 
     for (p in vars) {
       if (p === "autoRound") {
@@ -5882,7 +5772,7 @@ var CSSPlugin = {
       } else if (p.substr(0, 2) === "--") {
         //CSS variable
         this.add(style, "setProperty", getComputedStyle(target).getPropertyValue(p) + "", endValue + "", index, targets, 0, 0, p);
-      } else if (type !== "undefined") {
+      } else {
         startValue = _get(target, p);
         startNum = parseFloat(startValue);
         relative = type === "string" && endValue.charAt(1) === "=" ? +(endValue.charAt(0) + "1") : 0;
@@ -5906,7 +5796,10 @@ var CSSPlugin = {
 
           if (p !== "scale" && p !== "transform") {
             p = _propertyAliases[p];
-            ~p.indexOf(",") && (p = p.split(",")[0]);
+
+            if (~p.indexOf(",")) {
+              p = p.split(",")[0];
+            }
           }
         }
 
@@ -5935,7 +5828,9 @@ var CSSPlugin = {
             } else {
               endUnit = parseFloat(endValue.split(" ")[2]) || 0; //handle the zOrigin separately!
 
-              endUnit !== cache.zOrigin && _addNonTweeningPT(this, cache, "zOrigin", cache.zOrigin, endUnit);
+              if (endUnit !== cache.zOrigin) {
+                _addNonTweeningPT(this, cache, "zOrigin", cache.zOrigin, endUnit);
+              }
 
               _addNonTweeningPT(this, style, p, _firstTwoOnly(startValue), _firstTwoOnly(endValue));
             }
@@ -5969,8 +5864,12 @@ var CSSPlugin = {
           startUnit = (startValue + "").substr((startNum + "").length);
           endNum || (endNum = 0); // protect against NaN
 
-          endUnit = (0, _gsapCore.getUnit)(endValue) || (p in _gsapCore._config.units ? _gsapCore._config.units[p] : startUnit);
-          startUnit !== endUnit && (startNum = _convertToUnit(target, p, startValue, endUnit));
+          endUnit = (endValue + "").substr((endNum + "").length) || (p in _gsapCore._config.units ? _gsapCore._config.units[p] : startUnit);
+
+          if (startUnit !== endUnit) {
+            startNum = _convertToUnit(target, p, startValue, endUnit);
+          }
+
           this._pt = new _gsapCore.PropTween(this._pt, isTransformRelated ? cache : style, p, startNum, relative ? relative * endNum : endNum - startNum, endUnit === "px" && vars.autoRound !== false && !isTransformRelated ? _renderRoundedCSSProp : _renderCSSProp);
           this._pt.u = endUnit || 0;
 
@@ -5995,7 +5894,9 @@ var CSSPlugin = {
       }
     }
 
-    hasPriority && (0, _gsapCore._sortPropTweensByPriority)(this);
+    if (hasPriority) {
+      (0, _gsapCore._sortPropTweensByPriority)(this);
+    }
   },
   get: _get,
   aliases: _propertyAliases,
@@ -6183,7 +6084,57 @@ TweenMaxWithCSS = gsapWithCSS.core.Tween;
 
 exports.TweenMax = TweenMaxWithCSS;
 exports.default = exports.gsap = gsapWithCSS;
-},{"./gsap-core.js":"TNS6","./CSSPlugin.js":"bp4Z"}],"LMRJ":[function(require,module,exports) {
+},{"./gsap-core.js":"TNS6","./CSSPlugin.js":"bp4Z"}],"MgTz":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.preloadFonts = exports.getMousePos = exports.lerp = void 0;
+
+// Linear interpolation
+var lerp = function lerp(a, b, n) {
+  return (1 - n) * a + n * b;
+}; // Gets the mouse position
+
+
+exports.lerp = lerp;
+
+var getMousePos = function getMousePos(e) {
+  var posx = 0;
+  var posy = 0;
+  if (!e) e = window.event;
+
+  if (e.pageX || e.pageY) {
+    posx = e.pageX;
+    posy = e.pageY;
+  } else if (e.clientX || e.clientY) {
+    posx = e.clientX + body.scrollLeft + document.documentElement.scrollLeft;
+    posy = e.clientY + body.scrollTop + document.documentElement.scrollTop;
+  }
+
+  return {
+    x: posx,
+    y: posy
+  };
+}; // Preload images
+
+
+exports.getMousePos = getMousePos;
+
+var preloadFonts = function preloadFonts(id) {
+  return new Promise(function (resolve, reject) {
+    WebFont.load({
+      typekit: {
+        id: id
+      },
+      active: resolve
+    });
+  });
+};
+
+exports.preloadFonts = preloadFonts;
+},{}],"LMRJ":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6225,19 +6176,13 @@ var Cursor = /*#__PURE__*/function () {
       tx: {
         previous: 0,
         current: 0,
-        amt: 0.2
+        amt: 0.18
       },
       ty: {
         previous: 0,
         current: 0,
-        amt: 0.2
-      },
-      scale: {
-        previous: 1,
-        current: 1,
-        amt: 0.15
-      } //opacity: {previous: 1, current: 1, amt: 0.1}
-
+        amt: 0.18
+      }
     };
 
     this.onMouseMoveEv = function () {
@@ -6260,16 +6205,6 @@ var Cursor = /*#__PURE__*/function () {
   }
 
   _createClass(Cursor, [{
-    key: "enter",
-    value: function enter() {
-      this.renderedStyles['scale'].current = 2.5; //this.renderedStyles['opacity'].current = 0.5;
-    }
-  }, {
-    key: "leave",
-    value: function leave() {
-      this.renderedStyles['scale'].current = 1; //this.renderedStyles['opacity'].current = 1;
-    }
-  }, {
     key: "render",
     value: function render() {
       var _this2 = this;
@@ -6281,8 +6216,7 @@ var Cursor = /*#__PURE__*/function () {
         this.renderedStyles[key].previous = (0, _utils.lerp)(this.renderedStyles[key].previous, this.renderedStyles[key].current, this.renderedStyles[key].amt);
       }
 
-      this.DOM.el.style.transform = "translateX(".concat(this.renderedStyles['tx'].previous, "px) translateY(").concat(this.renderedStyles['ty'].previous, "px) scale(").concat(this.renderedStyles['scale'].previous, ")"); //this.DOM.el.style.opacity = this.renderedStyles['opacity'].previous;
-
+      this.DOM.el.style.transform = "translateX(".concat(this.renderedStyles['tx'].previous, "px) translateY(").concat(this.renderedStyles['ty'].previous, "px)");
       requestAnimationFrame(function () {
         return _this2.render();
       });
@@ -6293,515 +6227,126 @@ var Cursor = /*#__PURE__*/function () {
 }();
 
 exports.default = Cursor;
-},{"gsap":"TpQl","./utils":"MgTz"}],"EFc8":[function(require,module,exports) {
+},{"gsap":"TpQl","./utils":"MgTz"}],"QvaY":[function(require,module,exports) {
 "use strict";
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
+require("splitting/dist/splitting.css");
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+require("splitting/dist/splitting-cells.css");
 
-var ContentPage = function ContentPage(el) {
-  _classCallCheck(this, ContentPage);
-
-  this.DOM = {
-    el: el
-  };
-  this.DOM.backCtrl = this.DOM.el.querySelector('.content__back');
-  this.DOM.title = this.DOM.el.querySelector('.content__title');
-  this.DOM.titleInner = this.DOM.title.querySelector('span');
-  this.DOM.intro = this.DOM.el.querySelector('.content__intro');
-  this.DOM.introInner = this.DOM.intro.querySelector('span');
-  this.DOM.date = this.DOM.el.querySelector('.content__date');
-  this.DOM.dateInner = this.DOM.date.querySelector('span');
-  this.DOM.gallery = this.DOM.el.querySelector('.gallery');
-  this.DOM.galleryItems = this.DOM.gallery.querySelectorAll('.gallery__figure');
-  this.bgcolor = this.DOM.el.dataset.bgcolor;
-};
-
-exports.default = ContentPage;
-},{}],"Jy3L":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
+var _splitting2 = _interopRequireDefault(require("splitting"));
 
 var _gsap = require("gsap");
-
-var _contentPage = _interopRequireDefault(require("./contentPage"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
-
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
-function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
-
-function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
-
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-var MenuItem = /*#__PURE__*/function () {
-  function MenuItem(el, galleryEl, contentEl) {
-    _classCallCheck(this, MenuItem);
-
-    this.DOM = {
-      el: el,
-      gallery: galleryEl,
-      content: contentEl
-    };
-    this.DOM.title = this.DOM.el.querySelector('.menu__item-title');
-    this.DOM.deco = this.DOM.el.querySelector('.menu__item-deco');
-    this.DOM.cta = this.DOM.el.querySelector('.menu__item-cta');
-    this.DOM.ctaInner = this.DOM.cta.querySelector('span');
-    this.DOM.galleryItems = _toConsumableArray(this.DOM.gallery.querySelectorAll('.bg-gallery__item'));
-    this.contentPage = new _contentPage.default(this.DOM.content);
-    this.isCurrent = false;
-  }
-
-  _createClass(MenuItem, [{
-    key: "highlight",
-    value: function highlight() {
-      this.toggleCurrent();
-
-      _gsap.gsap.set([this.DOM.deco, this.DOM.cta], {
-        opacity: 1
-      });
-
-      _gsap.gsap.to(this.DOM.galleryItems, {
-        duration: 1,
-        ease: 'expo',
-        startAt: {
-          scale: 0.01,
-          rotation: _gsap.gsap.utils.random(-20, 20)
-        },
-        scale: 1,
-        opacity: +this.isCurrent,
-        rotation: 0,
-        stagger: 0.05
-      });
-    }
-  }, {
-    key: "toggleCurrent",
-    value: function toggleCurrent() {
-      this.DOM.el.classList[this.isCurrent ? 'remove' : 'add']('menu__item--selected');
-      this.isCurrent = !this.isCurrent;
-    }
-  }]);
-
-  return MenuItem;
-}();
-
-exports.default = MenuItem;
-},{"gsap":"TpQl","./contentPage":"EFc8"}],"tn5Z":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _utils = require("./utils");
-
-var _gsap = require("gsap");
-
-var _menuItem = _interopRequireDefault(require("./menuItem"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
-
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-
-function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
-
-function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
-
-function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e2) { throw _e2; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e3) { didErr = true; err = _e3; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
-
-function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
-
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
-function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
-
-function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
-
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-// Calculate the viewport size
-var winsize = (0, _utils.calcWinsize)();
-window.addEventListener('resize', function () {
-  return winsize = (0, _utils.calcWinsize)();
-});
-
-var MenuController = /*#__PURE__*/function () {
-  function MenuController(el) {
-    var _this = this;
-
-    _classCallCheck(this, MenuController);
-
-    this.DOM = {
-      el: el
-    }; // Set of small images each selected menu item has on the background
-
-    this.DOM.galleries = _toConsumableArray(document.querySelectorAll('.bg-gallery-wrap > .bg-gallery')); // Content DOM
-
-    this.DOM.pagePreview = document.querySelector('.page--preview');
-    this.DOM.content = _toConsumableArray(this.DOM.pagePreview.querySelectorAll('.content')); // "Choose a project" element (line + text)
-
-    this.DOM.headline = {
-      deco: this.DOM.el.querySelector('.menu__headline > .menu__headline-deco'),
-      text: this.DOM.el.querySelector('.menu__headline > .menu__headline-text > span')
-    }; // array of all MenuItems
-
-    this.menuItems = [];
-
-    _toConsumableArray(this.DOM.el.querySelectorAll('.menu__item')).forEach(function (item, pos) {
-      _this.menuItems.push(new _menuItem.default(item, _this.DOM.galleries[pos], _this.DOM.content[pos]));
-    });
-
-    this.init();
-  }
-
-  _createClass(MenuController, [{
-    key: "init",
-    value: function init() {
-      // Current menu item index (starting with the first one).
-      this.current = 0; // Highlight the current menu item
-
-      this.menuItems[this.current].highlight(); // Init/Bind events
-
-      this.initEvents();
-    }
-  }, {
-    key: "initEvents",
-    value: function initEvents() {
-      var _this2 = this;
-
-      var _iterator = _createForOfIteratorHelper(this.menuItems.entries()),
-          _step;
-
-      try {
-        var _loop = function _loop() {
-          var _step$value = _slicedToArray(_step.value, 2),
-              pos = _step$value[0],
-              item = _step$value[1];
-
-          // Click/Select a menu item
-          item.DOM.el.addEventListener('click', function (ev) {
-            ev.preventDefault();
-            if (pos === _this2.current || _this2.isAnimating) return;
-            var direction = _this2.current < pos ? 'up' : 'down';
-
-            _this2.toggleMenuItems(item, direction); // Update current value
-
-
-            _this2.current = pos;
-          }); // click on the menu item's explore 
-
-          item.DOM.cta.addEventListener('click', function (ev) {
-            if (_this2.isAnimating) return;
-
-            _this2.showContent(item);
-          }); // Click on the back control when at the page preview
-
-          item.contentPage.DOM.backCtrl.addEventListener('click', function (ev) {
-            ev.preventDefault(); //if ( this.isAnimating ) return;
-
-            _this2.showMenu(item);
-          });
-        };
-
-        for (_iterator.s(); !(_step = _iterator.n()).done;) {
-          _loop();
-        }
-      } catch (err) {
-        _iterator.e(err);
-      } finally {
-        _iterator.f();
-      }
-    } // Click/Select a menu item
-    // Animate all the bg images out and animate the new menu item's in
-
-  }, {
-    key: "toggleMenuItems",
-    value: function toggleMenuItems(upcomingItem) {
-      var _this3 = this;
-
-      var direction = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'up';
-      var currentItem = this.menuItems[this.current];
-      var dir = direction === 'up' ? 1 : -1;
-      currentItem.toggleCurrent();
-      upcomingItem.toggleCurrent();
-
-      _gsap.gsap.timeline({
-        defaults: {
-          duration: 1,
-          ease: 'expo.inOut'
-        },
-        onStart: function onStart() {
-          return _this3.isAnimating = true;
-        },
-        onComplete: function onComplete() {
-          return _this3.isAnimating = false;
-        }
-      }).to(upcomingItem.DOM.title, {
-        ease: 'expo.in',
-        duration: 0.5,
-        y: dir * -100 + '%'
-      }, 0).to(upcomingItem.DOM.title, {
-        ease: 'expo',
-        duration: 0.8,
-        startAt: {
-          y: dir * 100 + '%'
-        },
-        y: '0%'
-      }, 0.5).to(currentItem.DOM.deco, {
-        scaleY: 0,
-        opacity: 0
-      }, 0).to(currentItem.DOM.cta, {
-        y: '100%',
-        opacity: 0
-      }, 0).to(currentItem.DOM.galleryItems, {
-        y: dir * -winsize.height * 1.2,
-        stagger: dir * 0.05,
-        rotation: _gsap.gsap.utils.random(-30, 30)
-      }, 0).addLabel('upcomingImages', 0.1).to(upcomingItem.DOM.deco, {
-        startAt: {
-          scaleY: 0
-        },
-        scaleY: 1,
-        opacity: 1
-      }, 'upcomingImages').to(upcomingItem.DOM.cta, {
-        startAt: {
-          y: dir * 100 + '%'
-        },
-        y: '0%',
-        opacity: 1
-      }, 'upcomingImages').to(upcomingItem.DOM.galleryItems, {
-        startAt: {
-          y: dir * winsize.height * 1.2,
-          rotation: _gsap.gsap.utils.random(-30, 30)
-        },
-        y: 0,
-        opacity: 1,
-        rotation: 0,
-        stagger: dir * 0.05
-      }, 'upcomingImages');
-    } // Hide the menu items and all other initial elements, and show the content for this menu item
-
-  }, {
-    key: "showContent",
-    value: function showContent(menuItem) {
-      var _this4 = this;
-
-      var timelineDefaults = {
-        duration: 0.8,
-        ease: 'expo.inOut'
-      };
-
-      _gsap.gsap.timeline({
-        defaults: timelineDefaults,
-        onStart: function onStart() {
-          return _this4.isAnimating = true;
-        },
-        onComplete: function onComplete() {
-          return _this4.isAnimating = false;
-        }
-      }).to(menuItem.DOM.deco, {
-        scaleY: 0
-      }).to(menuItem.DOM.ctaInner, {
-        y: '100%'
-      }, 0).to(menuItem.DOM.galleryItems, {
-        y: -winsize.height * 1.2,
-        opacity: 0,
-        stagger: 0.05,
-        rotation: _gsap.gsap.utils.random(-30, 30)
-      }, 0).to(this.menuItems.map(function (item) {
-        return item.DOM.title;
-      }), {
-        y: '100%',
-        stagger: {
-          each: 0.03,
-          from: 'end'
-        }
-      }, 0).to(this.DOM.headline.deco, {
-        scaleX: 0
-      }, 0).to(this.DOM.headline.text, {
-        y: '100%'
-      }, 0).addLabel('showPageContent', timelineDefaults.duration * .1).to(menuItem.contentPage.DOM.backCtrl, {
-        startAt: {
-          x: '50%'
-        },
-        x: '0%',
-        opacity: 1
-      }, 'showPageContent').to([menuItem.contentPage.DOM.titleInner, menuItem.contentPage.DOM.introInner, menuItem.contentPage.DOM.dateInner], {
-        startAt: {
-          y: '-100%'
-        },
-        onStart: function onStart() {
-          _gsap.gsap.set([menuItem.contentPage.DOM.title, menuItem.contentPage.DOM.intro, menuItem.contentPage.DOM.date], {
-            opacity: 1,
-            stagger: -0.06
-          });
-        },
-        y: '0%',
-        stagger: -0.06
-      }, 'showPageContent').to(menuItem.contentPage.DOM.galleryItems, {
-        startAt: {
-          y: '100%',
-          rotation: function rotation() {
-            return _gsap.gsap.utils.random(-20, 20);
-          }
-        },
-        y: '0%',
-        rotation: 0,
-        opacity: 1,
-        stagger: 0.08
-      }, 'showPageContent').to(document.body, {
-        backgroundColor: menuItem.contentPage.bgcolor
-      }, 0);
-
-      this.DOM.pagePreview.classList.remove('page--preview');
-      menuItem.DOM.content.classList.add('content--current');
-    } // Show back the menu
-
-  }, {
-    key: "showMenu",
-    value: function showMenu(menuItem) {
-      var _this5 = this;
-
-      var timelineDefaults = {
-        duration: 0.8,
-        ease: 'expo.inOut'
-      }; // Scroll up first
-
-      (0, _utils.scrollIt)(0, 300, 'easeOutQuad', function () {
-        _gsap.gsap.timeline({
-          defaults: timelineDefaults,
-          onStart: function onStart() {
-            return _this5.isAnimating = true;
-          },
-          onComplete: function onComplete() {
-            _this5.DOM.pagePreview.classList.add('page--preview');
-
-            menuItem.DOM.content.classList.remove('content--current');
-            _this5.isAnimating = false;
-          }
-        }).to(document.body, {
-          backgroundColor: '#EAE4DE'
-        }, 0).to(menuItem.contentPage.DOM.galleryItems, {
-          y: '100%',
-          rotation: function rotation() {
-            return _gsap.gsap.utils.random(-20, 20);
-          },
-          opacity: 0,
-          stagger: 0.08
-        }, 0).to([menuItem.contentPage.DOM.titleInner, menuItem.contentPage.DOM.introInner, menuItem.contentPage.DOM.dateInner], {
-          onComplete: function onComplete() {
-            _gsap.gsap.set([menuItem.contentPage.DOM.title, menuItem.contentPage.DOM.intro, menuItem.contentPage.DOM.date], {
-              opacity: 0
-            });
-          },
-          y: '-100%',
-          stagger: 0.06
-        }, 0).to(menuItem.contentPage.DOM.backCtrl, {
-          x: '50%',
-          opacity: 0
-        }, 0).addLabel('showMenuItems', timelineDefaults.duration * .1).to(_this5.DOM.headline.text, {
-          y: '0%'
-        }, 'showMenuItems').to(_this5.DOM.headline.deco, {
-          scaleX: 1
-        }, 'showMenuItems').to(_this5.menuItems.map(function (item) {
-          return item.DOM.title;
-        }), {
-          y: '0%',
-          stagger: {
-            each: 0.03,
-            from: 'start'
-          }
-        }, 'showMenuItems').to(menuItem.DOM.galleryItems, {
-          startAt: {
-            rotation: _gsap.gsap.utils.random(-30, 30)
-          },
-          y: 0,
-          stagger: -0.05,
-          rotation: 0,
-          opacity: 1
-        }, 'showMenuItems').to(menuItem.DOM.ctaInner, {
-          y: '0%'
-        }, 'showMenuItems').to(menuItem.DOM.deco, {
-          scaleY: 1
-        }, 'showMenuItems');
-      });
-    }
-  }]);
-
-  return MenuController;
-}();
-
-exports.default = MenuController;
-},{"./utils":"MgTz","gsap":"TpQl","./menuItem":"Jy3L"}],"QvaY":[function(require,module,exports) {
-"use strict";
 
 var _utils = require("./utils");
 
 var _cursor = _interopRequireDefault(require("./cursor"));
 
-var _menuController = _interopRequireDefault(require("./menuController"));
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+// Preload typekit fonts
+(0, _utils.preloadFonts)('lwc3axy').then(function () {
+  return document.body.classList.remove('loading');
+}); // Call the splittingjs to transform the data-splitting texts to spans of chars 
 
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+(0, _splitting2.default)(); // Custom cursor
 
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+new _cursor.default(document.querySelector('.cursor')); // DOM elements
 
-function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
+var DOM = {
+  content: {
+    home: {
+      section: document.querySelector('.content__item--home'),
 
-function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+      get chars() {
+        return this.section.querySelectorAll('.content__paragraph .word > .char, .whitespace');
+      },
 
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+      isVisible: true
+    },
+    about: {
+      section: document.querySelector('.content__item--about'),
 
-// Preload  images and fonts
-Promise.all([(0, _utils.preloadImages)('.gallery__figure-img'), (0, _utils.preloadFonts)('yuz0mhb')]).then(function () {
-  // Remove loader (loading class)
-  document.body.classList.remove('loading'); // Initialize custom cursor
+      get chars() {
+        return this.section.querySelectorAll('.content__paragraph .word > .char, .whitespace');
+      },
 
-  var cursor = new _cursor.default(document.querySelector('.cursor')); // Initialize the MenuController
+      get picture() {
+        return this.section.querySelector('.content__figure');
+      },
 
-  new _menuController.default(document.querySelector('.menu')); // Mouse effects on all links
+      isVisible: false
+    }
+  },
+  links: {
+    about: {
+      anchor: document.querySelector('a.frame__about'),
 
-  _toConsumableArray(document.querySelectorAll('a')).forEach(function (link) {
-    link.addEventListener('mouseenter', function () {
-      return cursor.enter();
-    });
-    link.addEventListener('mouseleave', function () {
-      return cursor.leave();
-    });
-  });
+      get stateElement() {
+        return this.anchor.children;
+      }
+
+    },
+    home: document.querySelector('a.frame__home')
+  }
+}; // The gsap timeline (and some default settings) where the magic happens
+
+var timelineSettings = {
+  staggerValue: 0.014,
+  charsDuration: 0.5
+};
+
+var timeline = _gsap.gsap.timeline({
+  paused: true
+}).addLabel('start') // Stagger the animation of the home section chars
+.staggerTo(DOM.content.home.chars, timelineSettings.charsDuration, {
+  ease: 'Power3.easeIn',
+  y: '-100%',
+  opacity: 0
+}, timelineSettings.staggerValue, 'start') // Here we do the switch
+// We need to toggle the current class for the content sections
+.addLabel('switchtime').add(function () {
+  DOM.content.home.section.classList.toggle('content__item--current');
+  DOM.content.about.section.classList.toggle('content__item--current');
+}) // Change the body's background color
+.to(document.body, {
+  duration: 0.8,
+  ease: 'Power1.easeInOut',
+  backgroundColor: '#c3b996'
+}, 'switchtime-=timelineSettings.charsDuration/4') // Start values for the about section elements that will animate in
+.set(DOM.content.about.chars, {
+  y: '100%'
+}, 'switchtime').set(DOM.content.about.picture, {
+  y: '40%',
+  rotation: -4,
+  opacity: 0
+}, 'switchtime') // Stagger the animation of the about section chars
+.staggerTo(DOM.content.about.chars, timelineSettings.charsDuration, {
+  ease: 'Power3.easeOut',
+  y: '0%'
+}, timelineSettings.staggerValue, 'switchtime') // Finally, animate the picture in
+.to(DOM.content.about.picture, 0.8, {
+  ease: 'Power3.easeOut',
+  y: '0%',
+  opacity: 1,
+  rotation: 0
+}, 'switchtime+=0.6'); // Clicking the about and homepage links will toggle the content area, by playing and reversing the timeline
+// Need to switch current state for the about/close links
+
+
+var switchContent = function switchContent() {
+  DOM.links.about.stateElement[0].classList[DOM.content.about.isVisible ? 'add' : 'remove']('frame__about-item--current');
+  DOM.links.about.stateElement[1].classList[DOM.content.about.isVisible ? 'remove' : 'add']('frame__about-item--current');
+  timeline[DOM.content.about.isVisible ? 'reverse' : 'play']();
+  DOM.content.about.isVisible = !DOM.content.about.isVisible;
+  DOM.content.home.isVisible = !DOM.content.about.isVisible;
+};
+
+DOM.links.about.anchor.addEventListener('click', function () {
+  return switchContent();
 });
-},{"./utils":"MgTz","./cursor":"LMRJ","./menuController":"tn5Z"}]},{},["QvaY"], null)
+DOM.links.home.addEventListener('click', function () {
+  if (DOM.content.home.isVisible) return;
+  switchContent();
+});
+},{"splitting/dist/splitting.css":"oR66","splitting/dist/splitting-cells.css":"oR66","splitting":"Qdhu","gsap":"TpQl","./utils":"MgTz","./cursor":"LMRJ"}]},{},["QvaY"], null)
