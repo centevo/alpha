@@ -1,18 +1,17 @@
-# Diagonal Slideshow
+# Slide Out Box Menu
 
-A slideshow with a diagonal look and a content preview. Animated by [TweenMax](https://greensock.com/tweenmax).
+A details menu with boxes that get revealed in an irregular grid using [TweenMax](https://greensock.com/tweenmax).
 
-![Diagonal Slideshow](https://tympanus.net/codrops/wp-content/uploads/2018/08/DiagonalSlideshow.gif)
+![Slide Out Box Menu](https://tympanus.net/codrops/wp-content/uploads/2018/08/SlideOutBoxMenu_featured.jpg)
 
-[Article on Codrops](https://tympanus.net/codrops/?p=35765)
+[Article on Codrops](https://tympanus.net/codrops/?p=35517)
 
-[Demo](http://tympanus.net/Development/DiagonalSlideshow/)
+[Demo](https://tympanus.net/Development/SlideOutBoxMenu/)
 
 ## Credits
 
 - [imagesLoaded](https://imagesloaded.desandro.com/) by Dave DeSandro
 - [TweenMax](https://greensock.com/tweenmax) by Greensock
-- [Charming](https://github.com/yuanqing/charming) by Yuan Qing
 - Images from [Unsplash.com](https://unsplash.com/)
 
 ## License
