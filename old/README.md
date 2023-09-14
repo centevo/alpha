@@ -1,12 +1,13 @@
-# Grid Item Hover Effect
+# Double Slideshow
 
-Some hover effects based on the [grid design](https://dribbble.com/shots/21567003-SOTA-Branding) by [Alena Orlova](https://dribbble.com/Al_Eagle).
+A background/foreground slideshow inspired by [Exo Ape Case Hero](https://dribbble.com/shots/18201219-Exo-Ape-Case-Hero-Header). 
 
-![Grid Hover](https://tympanus.net/codrops/wp-content/uploads/2023/09/griditemhover.gif?x39121)
+![Image Title](https://tympanus.net/codrops/wp-content/uploads/2023/06/DoubleSlideshow-800x445.jpg?x43291)
 
-[Article on Codrops](https://tympanus.net/codrops/?p=73537)
+[Article on Codrops](https://tympanus.net/codrops/?p=72565)
 
-[Demo](http://tympanus.net/Development/GridItemHoverEffect/)
+[Demo](http://tympanus.net/Development/DoubleSlideshow/)
+
 
 ## Installation
 
@@ -14,13 +15,14 @@ Run this demo on a [local server](https://developer.mozilla.org/en-US/docs/Learn
 
 ## Credits
 
-- Images generated with [Midjourney](https://midjourney.com)
+- Images from [Unsplash](https://unsplash.com/)
 
 ## Misc
 
 Follow Codrops: [Twitter](http://www.twitter.com/codrops), [Facebook](http://www.facebook.com/codrops), [GitHub](https://github.com/codrops), [Instagram](https://www.instagram.com/codropsss/)
 
 ## License
+
 [MIT](LICENSE)
 
 Made with :blue_heart:  by [Codrops](http://www.codrops.com)
