@@ -1,12 +1,12 @@
-# Grid Item Hover Effect
+# Slideshow Animations
 
-Some hover effects based on the [grid design](https://dribbble.com/shots/21567003-SOTA-Branding) by [Alena Orlova](https://dribbble.com/Al_Eagle).
+A collection of ideas for slideshow animations.
 
-![Grid Hover](https://tympanus.net/codrops/wp-content/uploads/2023/09/griditemhover.gif?x39121)
+![Slideshow Animations](https://tympanus.net/codrops/wp-content/uploads/2023/09/slideshowanimations-1.jpg)
 
-[Article on Codrops](https://tympanus.net/codrops/?p=73537)
+[Article on Codrops](https://tympanus.net/codrops/?p=73708)
 
-[Demo](http://tympanus.net/Development/GridItemHoverEffect/)
+[Demo](http://tympanus.net/Development/SlideshowAnimations/)
 
 ## Installation
 
