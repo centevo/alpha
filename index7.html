@@ -13,7 +13,7 @@
 	<link rel="stylesheet" type="text/css" href="css/demo.css" />
 	<script>document.documentElement.className = 'js';</script>
 </head>
-<body class="demo-6 loading">
+<body class="demo-7 loading">
 	<canvas id="webgl"></canvas>
 	<svg class="hidden">
 		<symbol id="icon-arrow" viewBox="0 0 24 24">
@@ -42,8 +42,8 @@
 					<a class="demo" href="index3.html">Demo 3</a>
 					<a class="demo" href="index4.html">Demo 4</a>
 					<a class="demo" href="index5.html">Demo 5</a>
-					<a class="demo demo--current" href="index6.html">Demo 6</a>
-					<a class="demo" href="index7.html">Demo 7</a>
+					<a class="demo" href="index6.html">Demo 6</a>
+					<a class="demo demo--current" href="index7.html">Demo 7</a>
 					<a class="demo" href="index8.html">Demo 8</a>
 					<a class="demo" href="index9.html">Demo 9</a>
 				</nav>
@@ -147,10 +147,10 @@
 
 	void main(void) {
 		float time = globaltime * timescale;
-		vec2 center = vec2(sin(TWO_PI * time * 0.5), cos(TWO_PI * time * 0.5)) * nsin(time * 0.3) * 0.3;
+		vec2 center = vec2(sin(TWO_PI * time * 0.5), cos(TWO_PI * time * 0.5)) * nsin(time * 0.3) * 0.5;
 		vec2 tx = (gl_FragCoord.xy / resolution.xy - 0.5 + center) * vec2(aspect, 1.0) * 2.0;
 		float len = 1.0 - length(tx - center * 2.0) * 0.3;
-		float zoom = 15.0 + scroll * 0.5 * 20.0;
+		float zoom = 5.0 + scroll * 0.5 * 10.0;
 		float angle = PI * scroll * len;
 		float value = 0.0;
 		int age = 0;
@@ -167,6 +167,6 @@
 		gl_FragColor = texture2D(gradient, vec2(0.0, value));
 	}
 	</script>
-	<script src="js/demo6.js"></script>
+	<script src="js/demo7.js"></script>
 </body>
 </html>

@@ -6,7 +6,7 @@
 	// Scroll variables
 	var scroll = 0.0, velocity = 0.0, lastScroll = 0.0;
 
-	// Initialize REGL from a canvas element
+	// initialize REGL from a canvas element
 	var regl = createREGL({
 		canvas: canvas,
 		onDone: function(error, regl) {
@@ -16,7 +16,7 @@
 
 	// Loading a texture
 	var img = new Image();
-	img.src = 'img/img2.jpg';
+	img.src = 'img/gradient_map3.png';
 	img.onload = function() {
 		setTimeout(function() { document.body.classList.remove('loading');}, 1000);
 
@@ -32,7 +32,7 @@
 				aspect: regl.prop('aspect'),
 				scroll: regl.prop('scroll'),
 				velocity: regl.prop('velocity'),
-				texture: regl.texture(img)
+				gradient: regl.texture(img)
 			}
 		});
 
@@ -41,8 +41,8 @@
 
 			// Resize a canvas element with the aspect ratio (100vw, 100vh)
 			var aspect = canvas.scrollWidth / canvas.scrollHeight;
-			canvas.width = 1024 * aspect;
-			canvas.height = 1024;
+			canvas.width = 768 * aspect;
+			canvas.height = 768;
 
 			// Scroll amount (0.0 to 1.0)
 			scroll = window.pageYOffset / (document.documentElement.scrollHeight - window.innerHeight);
@@ -64,6 +64,7 @@
 				velocity: velocity
 			});
 		});
+
 	};
 
 }();
