@@ -1,12 +1,12 @@
-# Glass Text Effect
+# On-Scroll Shape Morph
 
-A simple scroll-based sliced text animation based on the effect seen on https://www.academyux.com/
+A demo of a on-scroll shape morph animations with an interactive tilt effect.
 
-![Sliced Text Effect](https://tympanus.net/codrops/wp-content/uploads/2023/12/slicedtext_feat.jpg)
+![On-Scroll Shape Morph](https://tympanus.net/codrops/wp-content/uploads/2023/11/ShapeMorph-1.jpg)
 
-[Article on Codrops](https://tympanus.net/codrops/?p=74735)
+[Article on Codrops](https://tympanus.net/codrops/?p=74333)
 
-[Demo](http://tympanus.net/Development/SlicedTextEffect/)
+[Demo](http://tympanus.net/Development/OnScrollShapeMorph/)
 
 ## Installation
 
@@ -14,7 +14,7 @@ Run this demo on a [local server](https://developer.mozilla.org/en-US/docs/Learn
 
 ## Credits
 
-- Images generated with [Midjourney](https://midjourney.com). Feel free to use them under CC BY 4.0.
+- Images generated with [Midjourney](https://midjourney.com)
 
 ## Misc
 
