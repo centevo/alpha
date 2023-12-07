@@ -1,60 +1,81 @@
 export class Item {
-	// Class property initialization with default values.
-	DOM = {
-		el: null,       // Reference to the main DOM element with class 'gtext'.
-		inner: null,    // Reference to the inner DOM elements with class 'gtext__box-inner'.
-		innerWrap: null // Reference to the inner DOM element parent with class 'gtext__box'.
-	};
-	totalCells = 1;     // Default value for the total number of cells.
+    // Initialize DOM and style related properties
+    // Various elements within this item
+    DOM = {
+        // Main DOM element
+        el: null,
+        // .title-wrap element
+        titleWrap: null,
+        // .title--up
+        titleUp: null,
+        // .title--down
+        titleDown: null,
+        // .content elements
+        content: null,
+        // svg element
+        svg: null,
+        // This is the mask element, it can be either a circle or a path SVG element.
+        // We will be animating the 'radius' attribute for circle or the 'd' attribute for path.
+        mask: null,
+        // image element
+        image: null,
+    };
+    // flipstate saves the current state of title elements
+    flipstate = null;
+    
+    /**
+     * Sets up the necessary elements and data for an Item instance.
+     * @param {HTMLElement} DOM_el - The DOM element that represents the item.
+     */
+    constructor(DOM_el) {
+        // Assign DOM elements
+        this.DOM.el = DOM_el;
+        this.DOM.titleWrap = this.DOM.el.querySelector('.title-wrap');
+        this.DOM.titleUp = this.DOM.titleWrap.querySelector('.title--up');
+        this.DOM.titleDown = this.DOM.titleWrap.querySelector('.title--down');
+        this.DOM.content = [...this.DOM.el.querySelectorAll('.content')];
+        this.DOM.svg = this.DOM.el.querySelector('.content__img');
+        this.DOM.mask = this.DOM.svg.querySelector('.mask');
+        this.DOM.image = this.DOM.svg.querySelector('image');
+        
+        // Save current state
+        this.flipstate = Flip.getState([this.DOM.titleUp, this.DOM.titleDown]);
+        
+        // Change layout
+        this.DOM.content[1].prepend(this.DOM.titleUp, this.DOM.titleDown);
+        
+        // Check if the mask element is a circle or a path
+        const isCircle = this.DOM.mask.tagName.toLowerCase() === 'circle';
 
-	/**
-	 * Constructor for the Item class.
-	 * @param {HTMLElement} DOM_el - The main DOM element for the item.
-	 * @param {number} totalCells - The total number of cells for the effect.
-	 */
-	constructor(DOM_el, totalCells) {
-		// Assign the provided DOM element to the 'el' property of the 'DOM' object.
-		this.DOM.el = DOM_el;
+        // Create the Flip.from that we'll pass into the ScrollTrigger animation property
+        const flip = Flip.from(this.flipstate, {
+            ease: 'none',
+            simple: true
+        })
+        .fromTo(this.DOM.mask, {
+            attr: isCircle ? {r: this.DOM.mask.getAttribute('r')} : {d: this.DOM.mask.getAttribute('d')},
+        }, {
+            ease: 'none',
+            attr: isCircle ? {r: this.DOM.mask.dataset.valueFinal} : {d: this.DOM.mask.dataset.valueFinal},
+        }, 0)
+        // Also scale up the image element
+        .fromTo(this.DOM.image, {
+            transformOrigin: '50% 50%',
+            filter: 'brightness(100%)'
+        }, {
+            ease: 'none',
+            scale: isCircle ? 1.2 : 1,
+            filter: 'brightness(150%)'
+        }, 0);
+        
 
-		this.totalCells = totalCells; // Set the total number of cells.
-
-		// Create the layout with 'totalCells' number of inner elements.
-		this.layout();
-
-		// Set initial CSS values and update them on window resize.
-		this.setCSSValues();
-		window.addEventListener('resize', () => this.setCSSValues());
-	}
-
-	/**
-	 * Generates the HTML layout for the inner elements based on 'totalCells'.
-	 */
-	layout() {
-		let newHTML = '';
-		for (let i = 0; i < this.totalCells; ++i) {
-			newHTML += `<span class="gtext__box"><span class="gtext__box-inner">${this.DOM.el.dataset.text}</span></span>`;
-		}
-
-		this.DOM.el.innerHTML = newHTML;
-		this.DOM.innerWrap = this.DOM.el.querySelectorAll('.gtext__box');
-		this.DOM.inner = this.DOM.el.querySelectorAll('.gtext__box-inner');
-	}
-
-	/**
-	 * Sets CSS custom properties and initial positions for the elements.
-	 */
-	setCSSValues() {
-		// Get the computed width of the first inner element.
-		const computedWidth = window.getComputedStyle(this.DOM.inner[0]).width;
-
-		// Set custom properties for text width and splits (totalCells).
-		this.DOM.el.style.setProperty('--text-width', computedWidth);
-		this.DOM.el.style.setProperty('--gsplits', this.totalCells);
-
-		// Calculate offset for positioning each inner element and apply left positioning.
-		const offset = parseFloat(computedWidth) / this.totalCells;
-		this.DOM.inner.forEach((inner, pos) => {
-			gsap.set(inner, { left: offset * -pos });
-		});
-	}
+        ScrollTrigger.create({
+            trigger: this.DOM.titleWrap,
+            ease: 'none',
+            start: 'clamp(top bottom-=10%)',
+            end: '+=40%',
+            scrub: true,
+            animation: flip,
+        });
+    }
 }

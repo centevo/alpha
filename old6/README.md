@@ -1,12 +1,12 @@
-# On-Scroll SVG Filter Effect
+# Glass Text Effect
 
-Combining GSAP's Scroll Trigger and Flip with a SVG Filter, based on a demo by Fabio Ottaviani.
+A simple scroll-based sliced text animation based on the effect seen on https://www.academyux.com/
 
-![On-Scroll SVG Filter Effects](https://tympanus.net/codrops/wp-content/uploads/2023/07/onscrollfilter_feat-1.jpg)
+![Sliced Text Effect](https://tympanus.net/codrops/wp-content/uploads/2023/12/slicedtext_feat.jpg)
 
-[Article on Codrops](https://tympanus.net/codrops/?p=72802)
+[Article on Codrops](https://tympanus.net/codrops/?p=74735)
 
-[Demo](http://tympanus.net/Development/OnScrollFilter/)
+[Demo](http://tympanus.net/Development/SlicedTextEffect/)
 
 ## Installation
 
@@ -14,7 +14,7 @@ Run this demo on a [local server](https://developer.mozilla.org/en-US/docs/Learn
 
 ## Credits
 
-- Images generated with [Midjourney](https://midjourney.com)
+- Images generated with [Midjourney](https://midjourney.com). Feel free to use them under CC BY 4.0.
 
 ## Misc
 
