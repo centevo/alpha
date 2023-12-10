@@ -1,146 +1,189 @@
-import { preloadImages, preloadFonts } from '../utils.js';
-import { Overlay } from './overlay.js';
+import { preloadImages } from '../utils.js';
 
-// Select the overlay element from the DOM
-const overlayEl = document.querySelector('.overlay');
+// Grid
+const introGrid = document.querySelector('.intro-grid--images');
 
-// Intro
-const intro = document.querySelector('.intro');
+// The grid images
+const gridImages = [...introGrid.querySelectorAll('.intro-grid__img')];
 
-// Intro images
-const images = [...intro.querySelectorAll('.intro__image')];
+// The grid labels
+const gridLabels = [...document.querySelectorAll('.intro-grid--labels > .intro-grid__label > .oh__inner')];
 
-// Content elements
-const contentElements = [...document.querySelectorAll('.content-wrap > .content')];
+// The grid title
+const gridTitle = {
+    main: document.querySelector('.intro-title > .intro-title__main > .oh__inner'),
+    sub: document.querySelector('.intro-title > .intro-title__sub > .oh__inner'),
+};
 
-// Instantiate an Overlay object using the selected overlay element
-const overlay = new Overlay(overlayEl, {
-    rows: 9,
-    columns: 17
-});
+// The slider title
+const sliderTitle = {
+    el: document.querySelector('.slider-title'),
+    main: document.querySelector('.slider-title > .slider-title__main > .oh__inner'),
+    desc: document.querySelector('.slider-title > .slider-title__desc'),
+};
 
+// Controls element
+const controls = document.querySelector('.controls');
+// Controls close button and nav elements
+const closeCtrl = controls.querySelector('button.close');
+const nav = controls.querySelector('nav.nav');
+
+// Clicked image's index value
+let current = -1;
+// Check if the animation is in progress
 let isAnimating = false;
+// grid || slider
+let mode = 'grid';
 
-// Attach click event listeners to each intro image
-images.forEach((image, position) => {
-    // Show the overlay when an intro image is clicked
-    image.addEventListener('click', () => {
-        if ( isAnimating ) return;
-        isAnimating = true;
+// Show the slider
+const showSlider = image => {
+    if ( isAnimating || mode === 'slider' ) return;
+    isAnimating = true;
+    mode = 'slider';
 
-        // Animate intro section
-        gsap.to(intro, {
-            duration: 1,
-            ease: 'power3.inOut',
-            scaleX: 1.8,
-            opacity: 0
-        });
+    const DURATION = 1;
+    const EASE = 'power4.inOut';
 
-        overlay.show({
-            // Duration for each cell animation
-            duration: 0.25,
-            // Ease for each cell animation
-            ease: 'power1.in',
-            // Stagger object
+    current = gridImages.indexOf(image);
+
+    gsap
+    .timeline({
+        defaults: {
+            duration: DURATION,
+            ease: EASE
+        },
+        onComplete: () => isAnimating = false
+    })
+    .addLabel('start', 0)
+    .to(Object.values(gridTitle), {
+        yPercent: -100
+    }, 'start')
+    .to(gridLabels, {
+        yPercent: -100
+    }, 'start')
+    .to(image, {filter: 'brightness(100%) hue-rotate(0deg)'}, 'start')
+    .add(() => {
+        // Save current state  of all images
+        const flipstate = Flip.getState(gridImages);
+        // Change layout
+        introGrid.classList.add('intro-grid--thumbs');
+        image.classList.add('intro-grid__img--current');
+        // Animate all
+        Flip.from(flipstate, {
+            duration: DURATION,
+            ease: EASE,
+            absolute: true,
             stagger: {
-                grid: [overlay.options.rows, overlay.options.columns],
-                from: 'center',
-                each: 0.025
-            }
-        })
-        .then(() => {
-            // show content
-            intro.classList.add('intro--closed');
-            contentElements[position].classList.add('content--open');
-            
-            // Now hide the overlay
-            overlay.hide({
-                // Duration for each cell animation
-                duration: 0.25,
-                // Ease for each cell animation
-                ease: 'power1',
-                // Stagger object
-                stagger: {
-                    grid: [overlay.options.rows, overlay.options.columns],
-                    from: 'center',
-                    each: 0.025
-                }
-            }).then(() => isAnimating = false);
-            
-            // Animate content image
-            gsap.fromTo(contentElements[position].querySelector('.content__img'), {
-                scaleX: 0.5,
-                opacity: 0
-            }, {
-                duration: 0.8,
-                ease: 'power3',
-                scaleX: 1,
-                opacity: 1
-            });
-        })
-        
+                each: 0.02,
+                from: 'start'
+            },
+            simple: true,
+            prune: true,
+        });
+    }, 'start')
+    .set(sliderTitle.el, {
+        opacity: 1
+    }, 'start')
+    .fromTo([sliderTitle.main, sliderTitle.desc], {
+        yPercent: pos => pos ? 240 : 100,
+        opacity: pos => pos ? 0 : 1
+    }, {
+        yPercent: 0,
+        opacity: 1
+    }, 'start')
+    .add(() => {
+        controls.classList.add('controls--open');
+    }, 'start')
+    .fromTo([closeCtrl, nav], {
+        scale: 0
+    }, {
+        opacity: 1,
+        scale: 1,
+        stagger: 0.02
+    }, 'start')
+};
+
+// Hide the slider
+const hideSlider = () => {
+    if ( isAnimating || mode === 'grid' ) return;
+    isAnimating = true;
+    mode = 'grid';
+
+    const DURATION = 1;
+    const EASE = 'power4.inOut';
+
+    gsap
+    .timeline({
+        defaults: {
+            duration: DURATION,
+            ease: EASE
+        },
+        onComplete: () => isAnimating = false
+    })
+    .to([closeCtrl, nav], {
+        opacity: 0,
+        scale: 0
+    }, 'start')
+    .add(() => {
+        controls.classList.remove('controls--open');
+    }, 'start')
+    .to([sliderTitle.main, sliderTitle.desc], {
+        yPercent: pos => pos ? 150 : 100,
+        opacity: pos => pos ? 0 : 1,
+        onComplete: () => gsap.set(sliderTitle.el, {opacity: 0})
+    }, 'start')
+    .add(() => {
+        // Save current state  of all images
+        const flipstate = Flip.getState(gridImages, {props: 'filter'});
+        // Change layout
+        introGrid.classList.remove('intro-grid--thumbs');
+        gridImages[current].classList.remove('intro-grid__img--current');
+        gsap.set(gridImages[current], {filter: 'brightness(100%) hue-rotate(0deg)'});
+
+        // Animate all
+        Flip.from(flipstate, {
+            duration: DURATION,
+            ease: EASE,
+            absolute: true,
+            stagger: {
+                each: 0.02,
+                from: current
+            },
+            simple: true,
+            prune: true,
+        });
+    }, 'start')
+    .to([gridLabels, Object.values(gridTitle)], {
+        yPercent: 0
+    }, 'start')
+};
+
+// Grid images click event
+gridImages.forEach(image => {
+    image.addEventListener('click', () => showSlider(image));
+
+    image.addEventListener('mouseenter', () => {
+        if ( mode === 'slider' ) return;
+        gsap.fromTo(image, {
+            filter: 'brightness(100%) hue-rotate(0deg)'
+        }, {
+            duration: 1, 
+            ease: 'power4', 
+            filter: 'brightness(200%) hue-rotate(130deg)'
+        });
     });
+
+    image.addEventListener('mouseleave', () => {
+        if ( mode === 'slider' ) return;
+        gsap.to(image, {
+            duration: 1, 
+            ease: 'power4', 
+            filter: 'brightness(100%) hue-rotate(0deg)'
+        });
+    });
+
+    closeCtrl.addEventListener('click', () => hideSlider());
 });
 
-// Attach click event listeners to each content back button
-contentElements.forEach((content) => {
-    content.querySelector('.content__back').addEventListener('click', () => {
-        if ( isAnimating ) return;
-        isAnimating = true;
-
-        // Animate content image
-        gsap.to(content.querySelector('.content__img'), {
-            duration: 0.7,
-            ease: 'power2.in',
-            scaleX: 0.75,
-            opacity: 0
-        });
- 
-        overlay.show({
-            // Duration for each cell animation
-            duration: 0.25,
-            // Ease for each cell animation
-            ease: 'power1.in',
-            // Stagger object
-            stagger: {
-                grid: [overlay.options.rows, overlay.options.columns],
-                from: 'edges',
-                each: 0.025
-            }
-        })
-        .then(() => {
-            // hide content here
-            intro.classList.remove('intro--closed');
-            content.classList.remove('content--open');
-            
-            // Now hide the overlay
-            overlay.hide({
-                // Duration for each cell animation
-                duration: 0.25,
-                // Ease for each cell animation
-                ease: 'power1',
-                // Stagger object
-                stagger: {
-                    grid: [overlay.options.rows, overlay.options.columns],
-                    from: 'edges',
-                    each: 0.025
-                }
-            }).then(() => isAnimating = false);
-
-            // Animate intro section
-            gsap.to(intro, {
-                duration: 0.8,
-                ease: 'expo',
-                scaleX: 1,
-                opacity: 1
-            });
-        })
-
-    });
-});
-
-// Preload images and fonts and remove loader
-Promise.all([
-    preloadImages('.intro__image, .content__img-inner'), 
-    preloadFonts('ctp6pec')
-]).then(() => document.body.classList.remove('loading'));
+// Preload images then remove loader (loading class) from body
+preloadImages('.intro-grid__img').then(() => document.body.classList.remove('loading'));

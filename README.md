@@ -1,13 +1,12 @@
-# Pixel Transition Effects
+# Grid to Slideshow Switch Animations
 
-Ideas for pixel page transitions based on an [animation](https://twitter.com/niccolomiranda/status/1628359949972819968) by [Niccolò Miranda](https://www.instagram.com/niccolomiranda/).
+Some ideas for grid to slideshow switch animations using GSAP's Flip plugin.
 
-![Pixel Transition](https://tympanus.net/codrops/wp-content/uploads/2023/04/pixeltransition.jpg)
+![Grid to Slider](https://tympanus.net/codrops/wp-content/uploads/2023/05/gridtoslider_feat.jpg)
 
-[Article on Codrops](https://tympanus.net/codrops/?p=71437)
+[Article on Codrops](https://tympanus.net/codrops/?p=71899)
 
-[Demo](http://tympanus.net/Development/PixelTransition/)
-
+[Demo](http://tympanus.net/Development/GridToSlider/)
 
 ## Installation
 
@@ -15,7 +14,7 @@ Run this demo on a [local server](https://developer.mozilla.org/en-US/docs/Learn
 
 ## Credits
 
-- Images from [Pexels](https://www.pexels.com/)
+- Images generated with [Midjourney](https://midjourney.com)
 
 ## Misc
 
