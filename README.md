@@ -1,12 +1,12 @@
-# Ideas for Image Motion Trail Animations
+# Grid to Slideshow Switch Animations
 
-Some ideas for mouse/touch responsive image animations.
+Some ideas for grid to slideshow switch animations using GSAP's Flip plugin.
 
-![Ideas for Image Motion Trail Animations](https://tympanus.net/codrops/wp-content/uploads/2023/10/classic.2023-10-18-11_16_37-1.gif)
+![Grid to Slider](https://tympanus.net/codrops/wp-content/uploads/2023/05/gridtoslider_feat.jpg)
 
-[Article on Codrops](https://tympanus.net/codrops/?p=74079)
+[Article on Codrops](https://tympanus.net/codrops/?p=71899)
 
-[Demo](http://tympanus.net/Development/MotionTrailAnimations/)
+[Demo](http://tympanus.net/Development/GridToSlider/)
 
 ## Installation
 
@@ -17,8 +17,6 @@ Run this demo on a [local server](https://developer.mozilla.org/en-US/docs/Learn
 - Images generated with [Midjourney](https://midjourney.com)
 
 ## Misc
-
-Follow Manoela: [Twitter](https://twitter.com/crnacura), [Instagram](https://www.instagram.com/manoela.ilic), [GitHub](https://github.com/crnacura) 
 
 Follow Codrops: [Twitter](http://www.twitter.com/codrops), [Facebook](http://www.facebook.com/codrops), [GitHub](https://github.com/codrops), [Instagram](https://www.instagram.com/codropsss/)
 
