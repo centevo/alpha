@@ -1,13 +1,12 @@
-# Double Slideshow
+# Grid to Slideshow Switch Animations
 
-A background/foreground slideshow inspired by [Exo Ape Case Hero](https://dribbble.com/shots/18201219-Exo-Ape-Case-Hero-Header). 
+Some ideas for grid to slideshow switch animations using GSAP's Flip plugin.
 
-![Image Title](https://tympanus.net/codrops/wp-content/uploads/2023/06/DoubleSlideshow-800x445.jpg?x43291)
+![Grid to Slider](https://tympanus.net/codrops/wp-content/uploads/2023/05/gridtoslider_feat.jpg)
 
-[Article on Codrops](https://tympanus.net/codrops/?p=72565)
+[Article on Codrops](https://tympanus.net/codrops/?p=71899)
 
-[Demo](http://tympanus.net/Development/DoubleSlideshow/)
-
+[Demo](http://tympanus.net/Development/GridToSlider/)
 
 ## Installation
 
@@ -15,14 +14,13 @@ Run this demo on a [local server](https://developer.mozilla.org/en-US/docs/Learn
 
 ## Credits
 
-- Images from [Unsplash](https://unsplash.com/)
+- Images generated with [Midjourney](https://midjourney.com)
 
 ## Misc
 
 Follow Codrops: [Twitter](http://www.twitter.com/codrops), [Facebook](http://www.facebook.com/codrops), [GitHub](https://github.com/codrops), [Instagram](https://www.instagram.com/codropsss/)
 
 ## License
-
 [MIT](LICENSE)
 
 Made with :blue_heart:  by [Codrops](http://www.codrops.com)
