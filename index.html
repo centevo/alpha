@@ -1,94 +1,133 @@
 <!DOCTYPE html>
 <html lang="en" class="no-js">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<title>Sticky Sections | Demo 1 | Codrops</title>
-		<meta name="description" content="Some examples for how sticky sections can be animated." />
-		<meta name="keywords" content="sticky, css, gsap, animation, sticky section, layout" />
-		<meta name="author" content="Codrops" />
-		<link rel="shortcut icon" href="favicon.ico">
-		<link rel="stylesheet" href="https://use.typekit.net/lsf5xpv.css">
-		<link rel="stylesheet" type="text/css" href="css/base.css" />
-		<script>document.documentElement.className="js";</script>
-	</head>
-	<body class="loading demo-1">
-		<main>
-			<header class="frame frame--header" style="background-image:url(img/1.png);">
-				<h1 class="frame__title">Sticky Sections</h1> 
-				<a class="frame__back" href="https://tympanus.net/codrops/?p=75532">Article</a>
-				<a class="frame__prev" href="http://tympanus.net/Development/ScrollCarousel/">Previous demo</a>
-				<a class="frame__sub" href="https://tympanus.net/codrops/collective/">Subscribe to our frontend news</a>
-				<nav class="frame__demos">
-					<span>1</span>
-					<a href="index2.html">2</a>
-					<a href="index3.html">3</a>
-					<a href="index4.html">4</a>
-					<a href="index5.html">5</a>
-					<a href="index6.html">6</a>
-					<a href="index7.html">7</a>
-					<a href="index8.html">8</a>
-					<a href="index9.html">9</a>
-					<a href="index10.html">10</a>
-					<a href="index11.html">11</a>
-					<a href="index12.html">12</a>
-					<a href="index13.html">13</a>
-					<a href="index14.html">14</a>
-					<a href="index15.html">15</a>
-				</nav>
-				<div class="frame__heading">
-					<h2 class="content__title"><i>The</i> Denizens</h2>
-					<p class="text-meta">An exploration of the Synthetic Era.</p>
-				</div>
-			</header>
-			<div class="content content--highlight content--intro">
-				<p class="text-large">As data conglomerates reveled in the opulence of cognitive wealth, a silent underclass manifested, condemned to the digital periphery.</p> 
-			</div>
-			<div class="wrap">
-				<div class="content content--sticky content--grid bg-1">
-					<img class="content__img content__img--large content__img--left" src="img/3.png" />
-					<h2 class="content__title"><i>The</i> Algorithm</h2>
-					<p class="content__text content__text--left text-meta">The algorithm's workings are shrouded in complexity, and its decision-making processes are inscrutable to the general populace.</p>
-				</div>
-				<div class="content content--sticky content--grid bg-2">
-					<img class="content__img content__img--large content__img--left" src="img/2.png" />
-					<h2 class="content__title"><i>The</i> Dogma</h2>
-					<p class="content__text content__text--left text-meta">The digital gospel etched into the very code of the algorithmic society, served as the bedrock of the cognitive regime.</p>
-				</div>
-				<div class="content content--sticky content--grid bg-3">
-					<img class="content__img content__img--large content__img--left" src="img/1.png" />
-					<h2 class="content__title"><i>The</i> Architects</h2>
-					<p class="content__text content__text--left text-meta">The elusive entities, lacking human form, operate in the shadows, skillfully shaping societal norms through the complex interplay of algorithms and Dogmas.</p>
-				</div>
-				<div class="content content--sticky content--grid bg-4">
-					<img class="content__img content__img--large content__img--left" src="img/4.png" />
-					<h2 class="content__title"><i>The</i> Wasteland</h2>
-					<p class="content__text content__text--left text-meta">This overlooked realm, a consequence of algorithmic judgments, is a haunting landscape filled with the echoes of untold stories and uncharted thoughts.</p>
-				</div>
-				<div class="content content--sticky content--grid bg-5">
-					<img class="content__img content__img--large content__img--left" src="img/5.png" />
-					<h2 class="content__title"><i>The</i> Narrative</h2>
-					<p class="content__text content__text--left text-meta">"The Narrative" unfolds as the omnipresent thread weaving through the fabric of the algorithmic society.</p>
-				</div>
-				<div class="content content--sticky content--grid bg-6">
-					<img class="content__img content__img--large content__img--left" src="img/6.png" />
-					<h2 class="content__title"><i>The</i> Opulence</h2>
-					<p class="content__text content__text--left text-meta">"The Opulence" epitomizes the cognitive elite's wealth in the algorithmic society, where opulent thoughts and experiences shape the societal narrative.</p>
-				</div>
-			</div>
-			<div class="content content--highlight content--outro">
-				<p class="text-large">Lost in perpetual dependency, inhabitants of the Synthetic Era found solace in cryptic simulations, where pain ebbed and cognitive loads momentarily lightened.</p> 
-				<img class="content__img spacer" src="img/1.png" />
-			</div>
-			<footer class="frame frame--footer">
-				<p class="frame__credits"><a href="https://www.vecteezy.com/members/annazdsgn">Images by Annas Muslimin</a> on Vecteezy</p>
-				<p class="frame__author"><span>Made by <a href="https://www.twitter.com/codrops">@codrops</a></span> <span><a href="mailto:crnacura@gmail.com">Hire us</a></span></p>
-			</footer>
-		</main>
-		<script src="js/gsap.min.js"></script>
-		<script src="js/ScrollTrigger.min.js"></script>
-		<script src="js/lenis.min.js"></script>
-		<script src="js/imagesloaded.pkgd.min.js"></script>
-		<script type="module" src="js/demo1/index.js"></script>
-	</body>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Wave Motion Effect | Demo 1 | Codrops</title>
+  <meta name="description" content="Wave motion effects on images with Three.js using simplex noise." />
+  <meta name="keywords" content="three.js, wave, motion, distortion, simplex noise, slideshow, javascript" />
+  <meta name="author" content="Codrops" />
+  <link rel="shortcut icon" href="favicon.ico">
+  <link rel="stylesheet" href="https://use.typekit.net/xjr3lgi.css">
+  <script>
+  document.documentElement.className = "js";
+  var supportsCssVars = function() { var e, t = document.createElement("style"); return t.innerHTML = "root: { --tmp-var: bold; }", document.head.appendChild(t), e = !!(window.CSS && window.CSS.supports && window.CSS.supports("font-weight", "var(--tmp-var)")), t.parentNode.removeChild(t), e };
+  supportsCssVars() || alert("Please view this demo in a modern browser that supports CSS Variables.");
+  </script>
+</head>
+
+<body class="demo-1 loading">
+  <div class="frame">
+    <div class="frame__title-wrap">
+      <h1 class="frame__title">Wave Motion Effect</h1>
+      <div class="frame__links">
+        <a href="https://tympanus.net/Development/BackgroundScaleHoverEffect/">Previous demo</a>
+        <a href="https://tympanus.net/codrops/?p=48418">Article</a>
+        <a href="https://github.com/marioecg/codrops-wave-motion">GitHub</a>
+      </div>
+    </div>
+    <div class="frame__demos">
+      <a href="index.html" class="frame__demo frame__demo--current">demo 1</a>
+      <a href="index2.html" class="frame__demo">demo 2</a>
+    </div>
+  </div>
+  <div data-scroll>
+    <div data-scroll-content>
+      <div class="content">
+        <div class="item">
+          <figure class="item__fig js-plane">
+            <div class="aspect" style="--aspect: 151.75%"></div>
+            <img class="item__img" src="img/img-01.jpg" alt="Some image" />
+          </figure>
+          <span class="item__pretitle">Cartesian man</span>
+          <h2 class="item__title">Actuator</h2>
+          <span class="item__counter">01</span>
+          <p class="item__description">Life lived in the absence of the psychedelic experience is life trivialized, life denied, life enslaved to the ego.</p>
+        </div>
+        <div class="item">
+          <figure class="item__fig js-plane">
+            <div class="aspect" style="--aspect: 104.25%"></div>
+            <img class="item__img" src="img/img-02.jpg" alt="Some image" />
+          </figure>
+          <span class="item__pretitle">Assembly fix</span>
+          <h2 class="item__title">Random</h2>
+          <span class="item__counter">02</span>
+          <p class="item__description">You are a divine being. You matter, you count. You come from realms of unimaginable power and light, and you will return to those realms.</p>
+        </div>
+        <div class="item">
+          <figure class="item__fig js-plane">
+            <div class="aspect" style="--aspect: 147.25%"></div>
+            <img class="item__img" src="img/img-03.jpg" alt="Some image" />
+          </figure>
+          <span class="item__pretitle">Dead head</span>
+          <h2 class="item__title">Uplinking</h2>
+          <span class="item__counter">03</span>
+          <p class="item__description">You simply have to turn your back on a culture that has gone sterile and dead and get with the program of a living world and the imagination.</p>
+        </div>
+        <div class="item">
+          <figure class="item__fig js-plane">
+            <div class="aspect" style="--aspect: 95.25%"></div>
+            <img class="item__img" src="img/img-04.jpg" alt="Some image" />
+          </figure>
+          <span class="item__pretitle">Absence</span>
+          <h2 class="item__title">Half time</h2>
+          <span class="item__counter">04</span>
+          <p class="item__description">The syntactical nature of reality, the real secret of magic, is that the world is made of words. And if you know the words that the world is made of, you can make of it whatever you wish.</p>
+        </div>
+        <div class="item">
+          <figure class="item__fig js-plane">
+            <div class="aspect" style="--aspect: 131.5%"></div>
+            <img class="item__img" src="img/img-05.jpg" alt="Some image" />
+          </figure>
+          <span class="item__pretitle">Material Handling</span>
+          <h2 class="item__title">Operator</h2>
+          <span class="item__counter">05</span>
+          <p class="item__description">We tend to disempower ourselves. We tend to believe that we don’t matter. And in the act of taking that idea to ourselves we give everything away to somebody else, to something else.</p>
+        </div>
+        <div class="item">
+          <figure class="item__fig js-plane">
+            <div class="aspect" style="--aspect: 84%"></div>
+            <img class="item__img" src="img/img-06.jpg" alt="Some image" />
+          </figure>
+          <span class="item__pretitle">Quality Assurance</span>
+          <h2 class="item__title">Remote</h2>
+          <span class="item__counter">06</span>
+          <p class="item__description">We are so much the victims of abstraction that with the Earth in flames we can barely rouse ourselves to wander across the room and look at the thermostat.</p>
+        </div>
+        <div class="item">
+          <figure class="item__fig js-plane">
+            <div class="aspect" style="--aspect: 133.5%"></div>
+            <img class="item__img" src="img/img-07.jpg" alt="Some image" />
+          </figure>
+          <span class="item__pretitle">Teach Mode</span>
+          <h2 class="item__title">SLURBT</h2>
+          <span class="item__counter">07</span>
+          <p class="item__description">The cost of sanity, in this society, is a certain level of alienation.</p>
+        </div>
+        <div class="item">
+          <figure class="item__fig js-plane">
+            <div class="aspect" style="--aspect: 90.75%"></div>
+            <img class="item__img" src="img/img-08.jpg" alt="Some image" />
+          </figure>
+          <span class="item__pretitle">World Model</span>
+          <h2 class="item__title">Cybark</h2>
+          <span class="item__counter">08</span>
+          <p class="item__description">Our need to feel part of the world seems to demand that we express ourselves through creative activity.</p>
+        </div>
+        <div class="item">
+          <figure class="item__fig js-plane">
+            <div class="aspect" style="--aspect: 121.25%"></div>
+            <img class="item__img" src="img/img-09.jpg" alt="Some image" />
+          </figure>
+          <span class="item__pretitle">Sensory guide</span>
+          <h2 class="item__title">Alt Touch</h2>
+          <span class="item__counter">09</span>
+          <p class="item__description">We are caged by our cultural programming. Culture is a mass hallucination, and when you step outside the mass hallucination you see it for what it’s worth.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
 </html>
